@@ -1,0 +1,81 @@
+@extends('admin.layouts.app')
+@section('content')
+<div class="page-content">
+				<!--breadcrumb-->
+				<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+					<div class="breadcrumb-title pe-3">Forms</div>
+					<div class="ps-3">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb mb-0 p-0">
+								<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
+								</li>
+								<li class="breadcrumb-item active" aria-current="page">Form Layouts</li>
+							</ol>
+						</nav>
+					</div>
+					<div class="ms-auto">
+						<div class="btn-group">
+							<button type="button" class="btn btn-primary">Settings</button>
+							<button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">	<span class="visually-hidden">Toggle Dropdown</span>
+							</button>
+							<div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">	<a class="dropdown-item" href="javascript:;">Action</a>
+								<a class="dropdown-item" href="javascript:;">Another action</a>
+								<a class="dropdown-item" href="javascript:;">Something else here</a>
+								<div class="dropdown-divider"></div>	<a class="dropdown-item" href="javascript:;">Separated link</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--end breadcrumb-->
+				<div class="row">
+					<div class="col-xl-6 mx-auto">	
+						<div class="card">
+							<div class="card-body p-4">
+								@if ($errors->any())
+									<div class="alert alert-warning alert-dismissible fade show">
+										<ul>
+											@foreach ($errors->all() as $error)
+												<li>{{ $error }}</li>                                
+											@endforeach
+										</ul>
+									</div>
+								@endif
+
+								@if (session('success'))
+									<div class="alert alert-success">
+										{{ session('success') }}
+									</div>
+								@endif
+								<h5 class="mb-4">Add Category</h5>
+								<form class="row g-3" action="{{ route('admin.category.store') }}" method="POST">
+									@csrf 
+									<div class="col-md-12">
+										<label for="name" class="form-label">Category Name</label>
+										<input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" placeholder="Enter your category">
+									</div>
+									<div class="col-md-12">
+										<label for="status" class="form-label">Status</label>
+										<select class="form-control" id="status" name="status">
+											<option value="1" selected>Active</option>
+											<option value="0">Inactive</option>
+										</select>
+									</div>
+
+
+									<div class="col-md-12">
+										<div class="d-md-flex d-grid align-items-center gap-3">
+											<button type="submit" class="btn btn-primary px-4">Submit</button>
+											<button type="reset" class="btn btn-light px-4">Reset</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+
+						
+
+				
+
+			</div>		
+@endsection
+
