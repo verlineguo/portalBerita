@@ -9,5 +9,13 @@ class NewsLetter extends Model
 {
     use HasFactory;
     
+    protected $table = 'newsletter';
+
     protected $fillable = ['email', 'status'];
+
+    public function isActive()
+    {
+        return $this->status == 1;
+    }
+    
 }

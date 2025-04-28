@@ -27,7 +27,7 @@ class roleManager
                     return $next($request);
                 }
                 break;
-            case 'editor':
+            case 'writer':
                 if ($authUserRole == 1) {
                     return $next($request);
                 }
@@ -43,9 +43,9 @@ class roleManager
             case 0:
                 return redirect()->route('admin.dashboard');
             case 1:
-                return redirect()->route('editor.dashboard');
+                return redirect()->route('writer.dashboard');
             case 2:
-                return redirect()->route('visitor.dashboard');
+                return redirect()->route('visitor.page');
         }
         return redirect()->route('login');
     }

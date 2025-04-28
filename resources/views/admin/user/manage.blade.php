@@ -1,4 +1,189 @@
 @extends('admin.layouts.app')
+@section('styles')
+<link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+
+<style>
+    #userTable {
+        border: none !important;
+    }
+    #userTable th,
+        #userTable td {
+            border: none !important;
+        }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border: none !important;
+    }
+
+    /* Hapus background dan border saat hover */
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #0d6efd !important; /* Bootstrap primary color */
+}
+
+/* Tambahkan hover yang lebih soft (opsional) */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 5px 10px;
+    margin: 0 2px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #e7f1ff !important;
+    color: #0d6efd !important;
+}
+
+/* Style tombol yang sedang aktif */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #0d6efd !important;
+    color: white !important;
+    border-radius: 6px;
+}
+
+
+</style>
+
+@endsection
 @section('content')
-<h3>Manage User Page</h3>
+<div class="page-content">
+    <!-- Breadcrumb -->
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">Users</div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"><i class="bx bx-home-alt"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Users Management</li>
+                </ol>
+            </nav>
+        </div>
+        
+    </div>
+    <!-- End Breadcrumb -->
+   
+    <h6 class="mb-0 text-uppercase">Users Management</h6>
+    <hr/>
+    <div class="ms-auto d-flex mb-3 justify-content-between">
+        <!-- Dropdown Filter Role -->
+        <form method="GET" action="{{ route('admin.user.manage') }}">
+            <select name="role" id="role" class="form-select" onchange="this.form.submit()">
+                <option value="">All</option>
+                <option value="0" {{ request('role') === '0' ? 'selected' : '' }}>Admin</option>
+                <option value="1" {{ request('role') === '1' ? 'selected' : '' }}>Writer</option>
+                <option value="2" {{ request('role') === '2' ? 'selected' : '' }}>Visitor</option>
+            </select>
+        </form>
+        <div class="btn-group">
+            <a href="{{ route('admin.user.create') }}" class="btn btn-primary">Create</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="userTable" class="table table-striped table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>    
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($users as $user)
+                        <tr>
+                            <td>{{ $user->id }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>
+                                @if($user->role == 0)
+                                    Admin
+                                @elseif($user->role == 1)
+                                    Writer
+                                @elseif($user->role == 2)
+                                    Visitor
+                                @else
+                                    Unknown
+                                @endif
+                            </td>
+                            
+                            <td>
+                                <a href="{{ route('admin.user.show', $user->id) }}" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
+
+                                <form action="{{ route('admin.user.delete', $user->id) }}"
+                                    method="post" 
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn btn-danger delete-btn"
+                                        data-id="{{ $user->id }}"><i class="fas fa-trash"></i></button>
+                                </form>
+                            
+                                
+                            
+                
+                            </td>
+                            
+                        </tr>
+                        @endforeach
+                    </tbody>  
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#userTable').DataTable();
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '{{ session('error') }}',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+        });
+    
+
+        $('.delete-btn').on('click', function() {
+            let form = $(this).closest('form');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+</script>
+
 @endsection

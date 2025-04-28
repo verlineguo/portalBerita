@@ -8,7 +8,9 @@
                                 <div class="header-info-left">
                                     <ul>     
                                         <li><img src="{{ asset('frontend') }}/assets/img/icon/header_icon1.png" alt="">34ºc, Sunny </li>
-                                        <li><img src="{{ asset('frontend') }}/assets/img/icon/header_icon1.png" alt="">Tuesday, 18th June, 2019</li>
+                                        <li><img src="{{ asset('frontend/assets/img/icon/header_icon1.png') }}" alt="">
+                                            <span id="current-date"></span>
+                                        </li>                     
                                     </ul>
                                 </div>
                                 <div class="header-info-right">
@@ -28,14 +30,16 @@
                             <!-- Logo -->
                             <div class="col-xl-3 col-lg-3 col-md-3">
                                 <div class="logo">
-                                    <a href="index.html"><img src="assets/img/logo/logo.png" alt=""></a>
+                                    <a href="{{ route('visitor.page') }}"><svg width="200" height="60" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="200" height="60" fill="#ffffff"/>
+                                        <text x="10" y="40" font-family="Segoe UI, sans-serif" font-size="40" fill="#1a1a1a">
+                                          <tspan fill="#e63946" font-weight="bold">Berita</tspan>kan
+                                        </text>
+                                      </svg>
+                                      </a>
                                 </div>
                             </div>
-                            <div class="col-xl-9 col-lg-9 col-md-9">
-                                <div class="header-banner f-right ">
-                                    <img src="assets/img/hero/header_card.jpg" alt="">
-                                </div>
-                            </div>
+                          
                         </div>
                    </div>
                 </div>
@@ -51,19 +55,12 @@
                                 <div class="main-menu d-none d-md-block">
                                     <nav>                  
                                         <ul id="navigation">    
-                                            <li><a href="index.html">Home</a></li>
-                                            <li><a href="categori.html">Category</a></li>
-                                            <li><a href="about.html">About</a></li>
-                                            <li><a href="latest_news.html">Latest News</a></li>
-                                            <li><a href="contact.html">Contact</a></li>
-                                            <li><a href="#">Pages</a>
-                                                <ul class="submenu">
-                                                    <li><a href="elements.html">Element</a></li>
-                                                    <li><a href="blog.html">Blog</a></li>
-                                                    <li><a href="single-blog.html">Blog Details</a></li>
-                                                    <li><a href="details.html">Categori Details</a></li>
-                                                </ul>
-                                            </li>
+                                            <li><a href="{{ route('visitor.page') }}">Home</a></li>
+                                            <li><a href="{{ route('visitor.category') }}">Category</a></li>
+                                            <li><a href="{{ route('visitor.about') }}">About</a></li>
+                                            <li><a href="{{ route('visitor.latest_news') }}">Latest News</a></li>
+                                            <li><a href="{{ route('visitor.contact') }}">Contact</a></li>
+                                            
                                         </ul>
                                     </nav>
                                 </div>
@@ -89,3 +86,12 @@
             </div>
        </div>
     </header>
+
+    <script>
+        function updateDate() {
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString('id-ID', options);
+        }
+        updateDate();
+    </script>
+    

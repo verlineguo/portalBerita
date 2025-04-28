@@ -63,3 +63,71 @@
             </div>
         </div>        
 @endsection
+
+
+@section('scripts')
+
+<script>
+    // Display SweetAlert for errors or success messages when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        @if ($errors->any())
+            Swal.fire({
+                title: 'Error!',
+                html: `@foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach`,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        @endif
+        
+        @if (session('success'))
+            Swal.fire({
+                title: 'Success!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        @endif
+    });
+
+
+
+    // Submit button with SweetAlert confirmation
+    document.getElementById('submitBtn').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Confirm Submission',
+            text: 'Are you sure you want to add this category?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, submit it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('categoryForm').submit();
+            }
+        });
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Reset Form',
+            text: 'Are you sure you want to reset all fields?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, reset it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('categoryForm').reset();
+                document.getElementById('image-preview').classList.add('d-none');
+                document.getElementById('image-preview').src = '';
+                
+                Swal.fire(
+                    'Reset!',
+                    'The form has been reset.',
+                    'success'
+                );
+            }
+        });
+    });
+</script>
+@endsection

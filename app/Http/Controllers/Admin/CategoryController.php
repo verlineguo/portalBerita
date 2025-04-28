@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -22,13 +23,17 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'status' => 'nullable|boolean',
         ]);
+        $slug = Str::slug($request->input('name'));
+
 
         Category::create([
             'name' => $request->name,
+            'slug' => $slug,
             'status' => $request->has('status') ? 1 : 0, 
         ]);
         return redirect()->route('admin.category.manage')->with('success', 'Category added successfully!');
     }
+    
 
     public function show($id) {
         $categories = Category::findOrFail($id);
@@ -48,9 +53,9 @@ class CategoryController extends Controller
         return redirect()->route('admin.category.manage')->with('success', 'Category updated successfully!');
     }
 
-    public function destory($id) {
-        $categories = Category::findOrFail($id);
-        $categories->delete();
+    public function destroy($id) {
+        $category = Category::findOrFail($id);
+        $category->delete();
 
         return redirect()->route('admin.category.manage')->with('success', 'Category deleted successfully!');
     }
