@@ -234,7 +234,7 @@
                                         <div class="d-flex order-actions">
                                             <a href="{{ route('writer.post.show', $post->id) }}"
                                                 class="ms-1 text-primary"><i class="bx bxs-edit"></i></a>
-                                            <a href="{{ route('writer.post.preview', $post->id) }}"
+                                            <a href="{{ route('writer.post.detail', $post->id) }}"
                                                 class="ms-2 text-info"><i class="bx bxs-show"></i></a>
                                             <a href="javascript:;" class="ms-2 text-danger"
                                                 onclick="if(confirm('Are you sure you want to delete this post?')) document.getElementById('delete-post-{{ $post->id }}').submit();"><i

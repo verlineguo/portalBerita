@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Visitor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Newsletter;
+use App\Models\User;
+use App\Notifications\NewsletterSubscriptionNotification;
+use App\Notifications\NewsletterWelcomeNotification;
+use Illuminate\Support\Facades\Notification;
 
 class NewsletterController extends Controller
 {
@@ -14,11 +18,32 @@ class NewsletterController extends Controller
             'email' => 'required|email',
         ]);
 
-        Newsletter::create([
+        $newsletter = Newsletter::create([
             'email' => $request->email,
-            'status' => 1,
-
+            'status' => true,
         ]);
+        $subscriber = (object) ['email' => $request->email];
+        Notification::route('mail', $request->email)
+        ->notify(new NewsletterWelcomeNotification());
+
+
+        $admins = User::where('role', 0)->get();
+        Notification::send($admins, new NewsletterSubscriptionNotification($newsletter));
+
+
         return redirect()->back()->with('success', 'Newsletter added successfully!');
     }
+
+    public function unsubscribe(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:newsletter,email',
+        ]);
+
+        $newsletter = Newsletter::where('email', $request->email)->first();
+        $newsletter->delete();
+
+        return redirect()->back()->with('success', 'Anda berhasil berhenti berlangganan newsletter kami.');
+    }
+
 }

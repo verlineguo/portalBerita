@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
@@ -36,6 +37,17 @@ class PostController extends Controller
         $posts = $query->get();
 
         return view('admin.post.manage', compact('posts', 'categories'));
+    }
+
+    public function detail($id)
+    {
+        $post = Post::with(['category', 'writer', 'tags'])->findOrFail($id);
+        $comments = Comment::where('post_id', $id)
+                         ->with('user')
+                         ->orderBy('created_at', 'desc')
+                         ->get();
+        
+        return view('admin.post.show', compact('post', 'comments'));
     }
 
     public function store(Request $request)

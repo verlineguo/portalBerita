@@ -17,5 +17,10 @@ class NewsLetter extends Model
     {
         return $this->status == 1;
     }
+
+    protected $casts = [
+        'status' => 'boolean',
+    ];
+    
     
 }

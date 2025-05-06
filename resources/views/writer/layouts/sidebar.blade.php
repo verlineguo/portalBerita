@@ -30,6 +30,13 @@
                 <div class="menu-title">Post</div>
             </a>
         </li>
+        <li class="{{ request()->routeIs('writer.comments') ? 'active' : '' }}">
+            <a href="{{ route('writer.comments') }}">
+                <div class="parent-icon"><i class='bx bx-spreadsheet'></i>
+                </div>
+                <div class="menu-title">Comment</div>
+            </a>
+        </li>
 
 
 

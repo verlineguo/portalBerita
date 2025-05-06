@@ -5,6 +5,12 @@
     #postsTable {
         border: none !important;
     }
+    #postsTable td:nth-child(3),
+        #postsTable th:nth-child(3) {
+     
+            white-space: normal;
+            /* Izinkan teks turun ke baris berikutnya */
+        }
     #postsTable th, #postsTable td {
         border: none !important;
     }
@@ -54,14 +60,14 @@
                             <i class="bx bx-home-alt"></i>
                         </a>
                     </li>
-                    <li class="breadcrumb-item active" aria-current="page">Post Management</li>
+                    <li class="breadcrumb-item active" aria-current="page">Post</li>
                 </ol>
             </nav>
         </div>
     </div>
     <!-- End Breadcrumb -->
 
-    <h4 class="mb-0 text-uppercase">Post Management</h4>
+    <h5 class="mb-0 text-uppercase">Post Management</h5>
     <hr/>
     <div class="ms-auto d-flex mb-3 justify-content-between">
         <!-- Dropdown Filter Role -->
@@ -114,16 +120,24 @@
                                 @endif    
                             </td>
                             <td>
-                                <a href="{{ route('writer.post.show', $post->id) }}" class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
-                                <a href="{{ route('writer.comment.manage', $post->id) }}" class="btn btn-info text-white"><i class="fas fa-eye"></i></a>
-                                <form action="{{ route('writer.post.delete', $post->id) }}"
-                                    method="post"
-                                    style="display:inline;">
+                                <a href="{{ route('writer.post.show', $post->id) }}" class="ms-1 text-warning"
+                                    style="font-size: 24px;"><i class="bx bxs-edit"></i></a>
+                                <a href="{{ route('writer.post.detail', $post->id) }}"class="ms-1 text-primary"
+                                    style="font-size: 24px;"><i class="bx bxs-show"></i></a>
+                                <a href="{{ route('writer.post.delete', $post->id) }}" class="ms-1 text-danger"
+                                    style="font-size: 24px;"
+                                    onclick="event.preventDefault(); confirmDelete('{{ $post->id }}')">
+                                    <i class="bx bxs-trash"></i>
+                                </a>
+
+                                <form id="delete-form-{{ $post->id }}"
+                                    action="{{ route('writer.post.delete', $post->id) }}" method="POST"
+                                    style="display: none;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="btn btn-danger delete-btn"
-                                        data-id="{{ $post->id }}"><i class="fas fa-trash"></i></button>
                                 </form>
+
+
                             </td>
                         </tr>
                         @endforeach
@@ -169,8 +183,7 @@
     
         
 
-        $('.delete-btn').on('click', function() {
-            let form = $(this).closest('form');
+        function confirmDelete(userId) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -181,9 +194,10 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit();
+                    document.getElementById('delete-form-' + userId).submit();
                 }
             });
-        });
+        }
+    
 </script>
 @endsection

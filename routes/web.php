@@ -10,8 +10,10 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Writer\PostController as WriterPostController;
 use App\Http\Controllers\Writer\ProfileController as WriterProfileController;
+use App\Http\Controllers\Writer\CommentController as WriterCommentController;
 use App\Http\Controllers\Visitor\NewsletterController as VisitorNewsletterController;
 use App\Http\Controllers\Visitor\ContactController as VisitorContactController;
 use App\Http\Controllers\Visitor\CategoryController as VisitorCategoryController;
@@ -19,6 +21,28 @@ use App\Http\Controllers\Visitor\PostController as VisitorPostController;
 use App\Http\Controllers\Visitor\VisitorMainController;
 use App\Http\Controllers\Writer\WriterMainController;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\AuthGoogleController;
+
+Route::get('/auth/google', [AuthGoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [AuthGoogleController::class, 'handleGoogleCallback']);
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/dashboard/search', [App\Http\Controllers\SearchController::class, 'dashboardSearch']);
+});
+
+Route::get('/{role}/notifications', [NotificationController::class, 'index'])
+        ->where('role', 'admin|writer|visitor')
+        ->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.read');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])
+        ->name('notifications.markAllAsRead');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])
+        ->name('notifications.getUnreadCount');
+    Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications'])
+        ->name('notifications.getUnreadNotifications');
 
 Route::middleware(['auth', 'verified', 'rolemanager:admin'])->group(function () {
     Route::prefix('admin')->group(function () {
@@ -52,6 +76,7 @@ Route::middleware(['auth', 'verified', 'rolemanager:admin'])->group(function () 
             Route::get('/post/manage', 'manage')->name('admin.post.manage');
             Route::post('/store/post', 'store')->name('admin.post.store');
             Route::get('/post/{id}', 'show')->name('admin.post.show');
+            Route::get('/post/preview/{id}', 'detail')->name('admin.post.detail');
             Route::put('/post/update/{id}', 'update');
             Route::get('/post/update/{id}', 'update')->name('admin.post.update');
             Route::delete('/post/delete/{id}', 'destroy')->name('admin.post.delete');
@@ -84,9 +109,12 @@ Route::middleware(['auth', 'verified', 'rolemanager:admin'])->group(function () 
         });
         Route::controller(CommentController::class)->group(function () {
             Route::get('/comments/manage', 'index')->name('admin.comment.index');
-            Route::get('/admin/comments/{post}', 'manage')->name('admin.comment.manage');
-            Route::put('/admin/comments/toggle/{id}', 'toggle')->name('admin.comments.toggle');
-            Route::delete('/admin/comments/destroy/{id}', 'destroy')->name('admin.comments.destroy');
+            Route::get('/comments/{post}', 'manage')->name('admin.comment.manage');
+            Route::put('comments/toggle-status/{id}', 'toggleStatus')->name('admin.comments.toggle');
+            Route::delete('/comments/destroy/{id}', 'destroy')->name('admin.comments.destroy');
+            Route::put('/comments/approve/{id}', 'approve')->name('admin.comments.approve');
+            Route::put('/comments/reject/{id}', 'reject')->name('admin.comments.reject');
+            Route::delete('/comments/delete/{id}', 'destroy')->name('admin.comments.delete');
         });
         Route::controller(NewsletterController::class)->group(function () {
             Route::get('/newsletter/manage', 'manage')->name('admin.newsletter.manage');
@@ -115,16 +143,15 @@ Route::middleware(['auth', 'verified', 'rolemanager:writer'])->group(function ()
             Route::post('/store/post', 'store')->name('writer.post.store');
             Route::get('/post/{id}', 'show')->name('writer.post.show');
             Route::put('/post/update/{id}', 'update');
-            Route::get('/post/preview/{id}', 'preview')->name('writer.post.preview');
+            Route::get('/post/preview/{id}', 'detail')->name('writer.post.detail');
             Route::get('/post/update/{id}', 'update')->name('writer.post.update');
             Route::get('/post/view/{id}', 'preview')->name('writer.post.view');
             Route::delete('/post/delete/{id}', 'destroy')->name('writer.post.delete');
             Route::get('/tags/search', 'search')->name('writer.tags.search');
         });
 
-        Route::controller(CommentController::class)->group(function () {
-            Route::get('/comments/manage', 'index')->name('writer.comments');
-            Route::get('/writer/comments/{post}', 'manage')->name('writer.comment.manage');
+        Route::controller(WriterCommentController::class)->group(function () {
+            Route::get('/comments/manage', 'manage')->name('writer.comments');
             Route::put('/writer/comments/toggle/{id}', 'toggle')->name('writer.comments.toggle');
             Route::delete('/writer/comments/destroy/{id}', 'destroy')->name('writer.comments.destroy');
         });

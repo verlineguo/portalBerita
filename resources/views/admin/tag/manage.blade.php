@@ -61,7 +61,7 @@
                                 <i class="bx bx-home-alt"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item active" aria-current="page">Tag Management</li>
+                        <li class="breadcrumb-item active" aria-current="page">Tag</li>
                     </ol>
                 </nav>
             </div>
@@ -73,7 +73,7 @@
         </div>
         <!-- End Breadcrumb -->
 
-        <h6 class="mb-0 text-uppercase">tag Management</h6>
+        <h5 class="mb-0 text-uppercase">tag Management</h5>
         <hr />
 
         <div class="card">
@@ -104,15 +104,22 @@
 
 
                                     <td>
-                                        <a href="{{ route('admin.tag.show', $tag->id) }}"
-                                            class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
-                                        <form action="{{ route('admin.tag.delete', $tag->id) }}" method="post"
-                                            style="display:inline;">
+                                        <a href="{{ route('admin.tag.show', $tag->id) }}" class="ms-1 text-warning"
+                                            style="font-size: 24px;"><i class="bx bxs-edit"></i></a>
+
+                                        <a href="{{ route('admin.tag.delete', $tag->id) }}" class="ms-1 text-danger"
+                                            style="font-size: 24px;"
+                                            onclick="event.preventDefault(); confirmDelete('{{ $tag->id }}')">
+                                            <i class="bx bxs-trash"></i>
+                                        </a>
+
+                                        <form id="delete-form-{{ $tag->id }}"
+                                            action="{{ route('admin.tag.delete', $tag->id) }}" method="POST"
+                                            style="display: none;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="btn btn-danger delete-btn"
-                                                data-id="{{ $tag->id }}"><i class="fas fa-trash"></i></button>
                                         </form>
+
                                     </td>
                                 </tr>
                             @endforeach
@@ -133,8 +140,7 @@
 
 
 
-        $('.delete-btn').on('click', function() {
-            let form = $(this).closest('form');
+        function confirmDelete(tagId) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -145,10 +151,10 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit();
+                    document.getElementById('delete-form-' + tagId).submit();
                 }
             });
-        });
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))

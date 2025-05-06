@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('styles')
-<link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
 
     <style>
         #advertisementTable {
@@ -16,39 +16,38 @@
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             border: none !important;
         }
+
         /* Hapus background dan border saat hover */
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    color: #0d6efd !important; /* Bootstrap primary color */
-}
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            color: #0d6efd !important;
+            /* Bootstrap primary color */
+        }
 
-/* Tambahkan hover yang lebih soft (opsional) */
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-    padding: 5px 10px;
-    margin: 0 2px;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-}
+        /* Tambahkan hover yang lebih soft (opsional) */
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    background-color: #e7f1ff !important;
-    color: #0d6efd !important;
-}
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background-color: #e7f1ff !important;
+            color: #0d6efd !important;
+        }
 
-/* Style tombol yang sedang aktif */
-.dataTables_wrapper .dataTables_paginate .paginate_button.current {
-    background-color: #0d6efd !important;
-    color: white !important;
-    border-radius: 6px;
-}
-
-
+        /* Style tombol yang sedang aktif */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #0d6efd !important;
+            color: white !important;
+            border-radius: 6px;
+        }
     </style>
 @endsection
 @section('content')
-
     <div class="page-content">
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
             <div class="breadcrumb-title pe-3">Advertisement</div>
@@ -60,7 +59,7 @@
                                 <i class="bx bx-home-alt"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item active" aria-current="page">Advertisement Management</li>
+                        <li class="breadcrumb-item active" aria-current="page">Advertisement</li>
                     </ol>
                 </nav>
             </div>
@@ -71,7 +70,7 @@
             </div>
         </div>
 
-        <h6 class="mb-0 text-uppercase">Advertisement Management</h6>
+        <h5 class="mb-0 text-uppercase">Advertisement Management</h5>
         <hr />
 
         <div class="card">
@@ -105,15 +104,23 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('admin.advertisement.show', $advertisement->id) }}"
-                                            class="btn btn-warning text-white"><i class="fas fa-edit"></i></a>
-                                            <form action="{{ route('admin.advertisement.delete', $advertisement->id) }}"
-                                                method="post" 
-                                                style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-danger delete-btn"
-                                                    data-id="{{ $advertisement->id }}"><i class="fas fa-trash"></i></button>
-                                            </form>
+                                            class="ms-1 text-warning" style="font-size: 24px;"><i
+                                                class="bx bxs-edit"></i></a>
+
+
+                                        <a href="{{ route('admin.advertisement.delete', $advertisement->id) }}"
+                                            class="ms-1 text-danger" style="font-size: 24px;"
+                                            onclick="event.preventDefault(); confirmDelete('{{ $advertisement->id }}')">
+                                            <i class="bx bxs-trash"></i>
+                                        </a>
+
+                                        <form id="delete-form-{{ $advertisement->id }}"
+                                            action="{{ route('admin.advertisement.delete', $advertisement->id) }}"
+                                            method="POST" style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+
                                     </td>
                                 </tr>
                             @endforeach
@@ -127,9 +134,8 @@
 
 
 @section('scripts')
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#advertisementTable').DataTable({
@@ -141,8 +147,8 @@
 
             });
 
-            
-            
+
+
         });
 
         // Display SweetAlert for success messages
@@ -181,10 +187,8 @@
                 timer: 3000
             });
         });
-   
-        // Handle delete button with SweetAlert confirmation
-        $('.delete-btn').on('click', function() {
-            let form = $(this).closest('form');
+
+        function confirmDelete(advertisementId) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -195,12 +199,9 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit();
+                    document.getElementById('delete-form-' + advertisementId).submit();
                 }
             });
-        });
-
-
-
-   </script>
+        }
+    </script>
 @endsection

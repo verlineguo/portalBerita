@@ -13,5 +13,9 @@ class Contact extends Model
 
     protected $fillable = ['message', 'name', 'email_address', 'subject', 'status'];
 
+    protected $casts = [
+        'status' => 'boolean',
+    ];
+    
     
 }

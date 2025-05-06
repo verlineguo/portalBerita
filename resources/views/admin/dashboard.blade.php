@@ -219,19 +219,17 @@
                                     <td>{{ $post->created_at->format('d M Y') }}</td>
                                     <td>
                                         @if ($post->status)
-                                            <span
-                                                class="badge bg-gradient-quepal text-white shadow-sm w-100">Published</span>
+                                            <span class="badge bg-success text-white shadow-sm w-100">Published</span>
                                         @else
-                                            <span class="badge bg-gradient-bloody text-white shadow-sm w-100">Draft</span>
+                                            <span class="badge bg-warning text-white shadow-sm w-100">Draft</span>
                                         @endif
                                     </td>
                                     <td>
                                         <div class="d-flex order-actions">
                                             <a href="{{ route('admin.post.show', $post->id) }}"
-                                                class="ms-1 text-primary"><i class="bx bxs-edit"></i></a>
-                                            <a href="javascript:;" class="ms-2 text-danger"
-                                                onclick="if(confirm('Are you sure you want to delete this post?')) document.getElementById('delete-post-{{ $post->id }}').submit();"><i
-                                                    class="bx bxs-trash"></i></a>
+                                                class="ms-1 text-warning"><i class="bx bxs-edit"></i></a>
+                                            <a href="javascript:;" class="ms-2 text-danger delete-post-btn"
+                                                data-post-id="{{ $post->id }}"><i class="bx bxs-trash"></i></a>
                                             <form id="delete-post-{{ $post->id }}"
                                                 action="{{ route('admin.post.delete', $post->id) }}" method="POST"
                                                 style="display: none;">
@@ -295,27 +293,41 @@
                                             <td>
                                                 @if ($comment->status)
                                                     <span
-                                                        class="badge bg-gradient-quepal text-white shadow-sm w-100">Approved</span>
+                                                        class="badge bg-success text-white shadow-sm w-100">Approved</span>
                                                 @else
                                                     <span
-                                                        class="badge bg-gradient-bloody text-white shadow-sm w-100">Pending</span>
+                                                        class="badge bg-warning text-white shadow-sm w-100">Pending</span>
                                                 @endif
                                             </td>
                                             <td>
                                                 <div class="d-flex order-actions">
-                                                    <a href="javascript:;" class="ms-1 text-success"
-                                                        onclick="if(confirm('Approve this comment?')) document.getElementById('approve-comment-{{ $comment->id }}').submit();"><i
+                                                    <a href="javascript:;" class="ms-1 text-success approve-comment-btn"
+                                                        data-comment-id="{{ $comment->id }}"><i
                                                             class="bx bxs-check-circle"></i></a>
-                                                    <a href="javascript:;" class="ms-2 text-danger"
-                                                        onclick="if(confirm('Are you sure you want to delete this comment?')) document.getElementById('delete-comment-{{ $comment->id }}').submit();"><i
+                                                    <a href="javascript:;" class="ms-2 text-warning reject-comment-btn"
+                                                        data-comment-id="{{ $comment->id }}"><i
+                                                            class="bx bxs-x-circle"></i></a>
+                                                    <a href="javascript:;" class="ms-2 text-danger delete-comment-btn"
+                                                        data-comment-id="{{ $comment->id }}"><i
                                                             class="bx bxs-trash"></i></a>
-                                                    <!-- Toggle Status -->
-                                                    <button
-                                                        class="btn btn-sm {{ $comment->status ? 'btn-warning' : 'btn-success' }} toggle-status"
-                                                        data-id="{{ $comment->id }}">
-                                                        {{ $comment->status ? 'Hide' : 'Show' }}
-                                                    </button>
-
+                                                    <form id="approve-comment-{{ $comment->id }}"
+                                                        action="{{ route('admin.comments.approve', $comment->id) }}"
+                                                        method="POST" style="display: none;">
+                                                        @csrf
+                                                        @method('PUT')
+                                                    </form>
+                                                    <form id="reject-comment-{{ $comment->id }}"
+                                                        action="{{ route('admin.comments.reject', $comment->id) }}"
+                                                        method="POST" style="display: none;">
+                                                        @csrf
+                                                        @method('PUT')
+                                                    </form>
+                                                    <form id="delete-comment-{{ $comment->id }}"
+                                                        action="{{ route('admin.comments.delete', $comment->id) }}"
+                                                        method="POST" style="display: none;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                    </form>
                                                 </div>
                                             </td>
                                         </tr>
@@ -525,11 +537,96 @@
     </div>
 @endsection
 @push('scripts-add')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    
+
     <script>
-        
+        $(document).ready(function() {
+            // Update the delete post links
+            $('.delete-post-btn').on('click', function(e) {
+                e.preventDefault();
+                const postId = $(this).data('post-id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to delete this post?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-post-' + postId).submit();
+                    }
+                });
+            });
+
+            // Update the approve comment links
+            $('.approve-comment-btn').on('click', function(e) {
+                e.preventDefault();
+                const commentId = $(this).data('comment-id');
+
+                Swal.fire({
+                    title: 'Approve Comment',
+                    text: "Are you sure you want to approve this comment?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, approve it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('approve-comment-' + commentId).submit();
+                    }
+                });
+            });
+
+            // Update the reject comment links
+            $('.reject-comment-btn').on('click', function(e) {
+                e.preventDefault();
+                const commentId = $(this).data('comment-id');
+
+                Swal.fire({
+                    title: 'Reject Comment',
+                    text: "Are you sure you want to reject this comment?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ffc107',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, reject it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('reject-comment-' + commentId).submit();
+                    }
+                });
+            });
+
+            // Update the delete comment links
+            $('.delete-comment-btn').on('click', function(e) {
+                e.preventDefault();
+                const commentId = $(this).data('comment-id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to delete this comment?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-comment-' + commentId).submit();
+                    }
+                });
+            });
+
+            // You can add more SweetAlert implementations here for other actions
+        });
+    </script>
+    <script>
         // Chart initialization script will go here
         $(document).ready(function() {
             // Chart 1 - Post activity overview

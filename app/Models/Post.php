@@ -59,6 +59,10 @@ class Post extends Model
         $this->views++;
         return $this->save();
     }
+    protected $casts = [
+        'status' => 'boolean',
+    ];
+    
 
     // Get approved comments
     public function approvedComments()
@@ -71,4 +75,10 @@ class Post extends Model
     {
         return $this->status == 1;
     }
+
+    public function commentsList()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
 }

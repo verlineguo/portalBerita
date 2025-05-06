@@ -1,4 +1,50 @@
 @extends('writer.layouts.app')
+@section('styles')
+<style>
+    #commentsTable {
+        border: none !important;
+    }
+
+    #commentsTable th,
+    #commentsTable td {
+        border: none !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border: none !important;
+    }
+
+    /* Hapus background dan border saat hover */
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: #0d6efd !important;
+        /* Bootstrap primary color */
+    }
+
+    /* Tambahkan hover yang lebih soft (opsional) */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 5px 10px;
+        margin: 0 2px;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background-color: #e7f1ff !important;
+        color: #0d6efd !important;
+    }
+
+    /* Style tombol yang sedang aktif */
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background-color: #0d6efd !important;
+        color: white !important;
+        border-radius: 6px;
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+@endsection
 
 @section('content')
 <div class="page-content">
@@ -8,31 +54,24 @@
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"><i class="bx bx-home-alt"></i></a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Comments</li>
+                    <li class="breadcrumb-item"><a href="{{ route('writer.dashboard') }}"><i
+                                class="bx bx-home-alt"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">All Comment</li>
                 </ol>
             </nav>
         </div>
     </div>
-    <!-- End Breadcrumb -->
 
-    <h6 class="mb-0 text-uppercase">All Comments</h6>
-    <hr/>
+    <h5 class="mb-0 text-uppercase">Comment Management</h5>
+    <hr />
+
 
     <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">List of Comments</h5>
-        </div>
-
-        @if (session('success'))
-            <div class="alert alert-success my-2">
-                {{ session('success') }}
-            </div>
-        @endif
+     
 
         <div class="card-body">
             <div class="table-responsive">
-                <table id="example" class="table table-striped table-bordered" style="width:100%">
+                <table id="commentsTable" class="table table-striped table-bordered" style="width:100%">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -40,41 +79,23 @@
                             <th>Post</th>
                             <th>Comment</th>
                             <th>Status</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($comments as $comment)
                         <tr>
-                            <td>{{ $comment->id }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $comment->user->name }}</td>
                             <td>{{ $comment->post->title }}</td>
                             <td>{{ Str::limit($comment->comment, 50) }}</td>
                             <td>
-                                @if ($comment->status)
+                                @if ($comment->status == 0)
+                                    <span class="badge bg-warning">Pending</span>
+                                @elseif ($comment->status == 1)
                                     <span class="badge bg-success">Visible</span>
                                 @else
                                     <span class="badge bg-danger">Hidden</span>
                                 @endif
-                            </td>
-                            <td>
-                                <!-- Toggle Status -->
-                                <form action="{{ route('admin.comments.toggle', $comment->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit" class="btn btn-sm {{ $comment->status ? 'btn-warning' : 'btn-success' }}">
-                                        {{ $comment->status ? 'Hide' : 'Show' }}
-                                    </button>
-                                </form>
-
-                                <!-- Delete Comment -->
-                                <form action="{{ route('admin.comments.destroy', $comment->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this comment?')">
-                                        Delete
-                                    </button>
-                                </form>
                             </td>
                         </tr>
                         @endforeach
@@ -85,3 +106,37 @@
     </div>
 </div>
 @endsection
+
+@section('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#commentsTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, 'All']
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search comments...",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                infoEmpty: "Showing 0 to 0 of 0 entries",
+                infoFiltered: "(filtered from _MAX_ total entries)",
+                paginate: {
+                    first: "First",
+                    last: "Last",
+                    next: "Next",
+                    previous: "Previous"
+                }
+            }
+        });
+    });
+
+    
+</script>
+@endsec

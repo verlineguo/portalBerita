@@ -50,13 +50,33 @@
             object-fit: cover;
         }
 
-        /* Recent articles */
-        .single-recent .what-img img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
+        /* Recent articles styling */
+.single-recents {
+    margin: 15px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+}
 
+.single-recents:hover {
+    transform: translateY(-5px);
+}
+
+.single-recents .what-img img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.single-recents .what-cap {
+    padding: 15px;
+}
+
+.recent-active .slick-slide {
+    margin: 0 10px;
+}
         /* Responsive adjustments */
         @media (max-width: 767px) {
             .trend-top-img img {
@@ -67,10 +87,100 @@
             .weekly-img img,
             .what-img img,
             .weekly2-img img,
-            .single-recent .what-img img {
+            .single-recents .what-img img {
                 height: 180px;
             }
         }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        /* Social media links */
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+        
+        .social-link:hover {
+            transform: translateY(-3px);
+        }
+        
+        .social-link img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+        .newsletter-form {
+            display: flex;
+            margin-top: 20px;
+        }
+        
+        .newsletter-form input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+        }
+        
+        .newsletter-form button {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 0 5px 5px 0;
+            font-weight: 600;
+        }
+
+        .video-container {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+        border-radius: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+    }
+    
+    .video-info {
+        padding: 15px 0;
+    }
+        
     </style>
 @section('content')
     <main>
@@ -283,66 +393,50 @@
                         </div>
                     </div>
                     <div class="col-lg-4">
-                        <!-- Section Tittle -->
-                        <div class="section-tittle mb-40">
-                            <h3>Follow Us</h3>
-                        </div>
-                        <!-- Flow Socail -->
-                        <div class="single-follow mb-45">
-                            <div class="single-box">
-                                <div class="follow-us d-flex align-items-center">
-                                    <div class="follow-social">
-                                        <a href="#"><img src="{{ asset('frontend') }}/assets/img/news/icon-fb.png"
-                                                alt=""></a>
+                        <div class="sidebar">
+                            <h4 class="sidebar-title">Subscribe & Follow</h4>
+                            <div class="social-links">
+                                <a href="#" class="social-link">
+                                    <img src="{{ asset('frontend') }}/assets/img/news/icon-fb.png" alt="Facebook">
+                                    <span>Facebook</span>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <img src="{{ asset('frontend') }}/assets/img/news/icon-tw.png" alt="Twitter">
+                                    <span>Twitter</span>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <img src="{{ asset('frontend') }}/assets/img/news/icon-ins.png" alt="Instagram">
+                                    <span>Instagram</span>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <img src="{{ asset('frontend') }}/assets/img/news/icon-yo.png" alt="YouTube">
+                                    <span>YouTube</span>
+                                </a>
+                            </div>
+                            
+                            <h4 class="sidebar-title mt-4">Newsletter</h4>
+                            <p>Stay updated with our latest news and updates directly in your inbox.</p>
+                            <form class="newsletter-form" action="{{ route('visitor.newsletter.store') }}" method="POST">
+                                @csrf
+                                <input type="email" name="email" placeholder="Your email address" required>
+                                <button type="submit">Subscribe</button>
+                            </form>
+                            
+                            <!-- Advertisement -->
+                            <div class="mt-4">
+                                @if ($advertisement && $advertisement->status)
+                                    <div class="text-center">
+                                        <a href="{{ $advertisement->url }}" target="_blank">
+                                            <img src="{{ asset('storage/' . $advertisement->image) }}" alt="Advertisement" class="img-fluid rounded">
+                                        </a>
                                     </div>
-                                    <div class="follow-count">
-                                        <span>8,045</span>
-                                        <p>Fans</p>
+                                @else
+                                    <div class="text-center">
+                                        <img src="{{ asset('frontend') }}/assets/img/news/news_card.jpg" alt="Advertisement" class="img-fluid rounded">
                                     </div>
-                                </div>
-                                <div class="follow-us d-flex align-items-center">
-                                    <div class="follow-social">
-                                        <a href="#"><img src="{{ asset('frontend') }}/assets/img/news/icon-tw.png"
-                                                alt=""></a>
-                                    </div>
-                                    <div class="follow-count">
-                                        <span>8,045</span>
-                                        <p>Fans</p>
-                                    </div>
-                                </div>
-                                <div class="follow-us d-flex align-items-center">
-                                    <div class="follow-social">
-                                        <a href="#"><img src="{{ asset('frontend') }}/assets/img/news/icon-ins.png"
-                                                alt=""></a>
-                                    </div>
-                                    <div class="follow-count">
-                                        <span>8,045</span>
-                                        <p>Fans</p>
-                                    </div>
-                                </div>
-                                <div class="follow-us d-flex align-items-center">
-                                    <div class="follow-social">
-                                        <a href="#"><img src="{{ asset('frontend') }}/assets/img/news/icon-yo.png"
-                                                alt=""></a>
-                                    </div>
-                                    <div class="follow-count">
-                                        <span>8,045</span>
-                                        <p>Fans</p>
-                                    </div>
-                                </div>
+                                @endif
                             </div>
                         </div>
-                        <!-- Advertisement -->
-                        @if ($advertisement && $advertisement->status)
-                            <div class="news-poster d-none d-lg-block">
-                                <img src="{{ asset('storage/' . $advertisement->image) }}"
-                                    alt="Advertisement">
-                            </div>
-                        @else
-                            <div class="news-poster d-none d-lg-block">
-                                <img src="{{ asset('frontend') }}/assets/img/news/news_card.jpg" alt="Advertisement">
-                            </div>
-                        @endif
                     </div>
                 </div>
             </div>
@@ -389,164 +483,237 @@
         <!-- End Weekly-News -->
 
         <!-- Start Youtube -->
-        <div class="youtube-area video-padding">
+        <!-- Video Gallery Section -->
+        <section class="bg-light py-5 mb-5">
             <div class="container">
+                <h3 class="section-heading">Video Gallery</h3>
                 <div class="row">
-                    <div class="col-12">
-                        <div class="video-items-active">
-                            <div class="video-items text-center">
-                                <iframe src="https://www.youtube.com/embed/CicQIuG8hBo" frameborder="0"
-                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen></iframe>
-                            </div>
-                            <div class="video-items text-center">
-                                <iframe src="https://www.youtube.com/embed/rIz00N40bag" frameborder="0"
-                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen></iframe>
-                            </div>
-                            <div class="video-items text-center">
-                                <iframe src="https://www.youtube.com/embed/CONfhrASy44" frameborder="0"
-                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen></iframe>
-                            </div>
-                            <div class="video-items text-center">
-                                <iframe src="https://www.youtube.com/embed/lq6fL2ROWf8" frameborder="0"
-                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen></iframe>
-                            </div>
-                            <div class="video-items text-center">
-                                <iframe src="https://www.youtube.com/embed/0VxlQlacWV4" frameborder="0"
-                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen></iframe>
-                            </div>
+                    <div class="col-lg-8">
+                        <div class="video-container mb-4">
+                            <iframe height="400" src="https://www.youtube.com/embed/CicQIuG8hBo" frameborder="0"
+                                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>{{ $featuredVideoPost->title ?? 'Latest Breaking News Updates' }}</h4>
+                            <p>{{ $featuredVideoPost->meta_description ?? 'Stay connected with the latest updates and breaking news from around the world.' }}</p>
                         </div>
                     </div>
-                </div>
-                <div class="video-info">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="video-caption">
-                                <div class="top-caption">
-                                    <span class="color1">{{ $featuredVideoPost->category->name ?? 'Featured' }}</span>
+                    <div class="col-lg-4">
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <div class="video-container">
+                                    <iframe height="180" src="https://www.youtube.com/embed/rIz00N40bag" frameborder="0"
+                                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen></iframe>
                                 </div>
-                                <div class="bottom-caption">
-                                    <h2>{{ $featuredVideoPost->title ?? 'Welcome To The Best News Portal' }}</h2>
-                                    <p>{{ $featuredVideoPost->meta_description ?? 'Latest news and updates from around the world.' }}
-                                    </p>
-                                </div>
+                                <h6 class="mt-2">{{ $videoPosts[0]->title ?? 'Technology Updates' }}</h6>
                             </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="testmonial-nav text-center">
-                                <div class="single-video">
-                                    <iframe src="https://www.youtube.com/embed/CicQIuG8hBo" frameborder="0"
+                            <div class="col-12 mb-4">
+                                <div class="video-container">
+                                    <iframe height="180" src="https://www.youtube.com/embed/CONfhrASy44" frameborder="0"
                                         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                                         allowfullscreen></iframe>
-                                    <div class="video-intro">
-                                        <h4>{{ $videoPosts[0]->title ?? 'Latest Video News' }}</h4>
-                                    </div>
                                 </div>
-                                <div class="single-video">
-                                    <iframe src="https://www.youtube.com/embed/rIz00N40bag" frameborder="0"
-                                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                        allowfullscreen></iframe>
-                                    <div class="video-intro">
-                                        <h4>{{ $videoPosts[1]->title ?? 'Latest Video News' }}</h4>
-                                    </div>
-                                </div>
-                                <div class="single-video">
-                                    <iframe src="https://www.youtube.com/embed/CONfhrASy44" frameborder="0"
-                                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                        allowfullscreen></iframe>
-                                    <div class="video-intro">
-                                        <h4>{{ $videoPosts[2]->title ?? 'Latest Video News' }}</h4>
-                                    </div>
-                                </div>
-                                <div class="single-video">
-                                    <iframe src="https://www.youtube.com/embed/lq6fL2ROWf8" frameborder="0"
-                                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                        allowfullscreen></iframe>
-                                    <div class="video-intro">
-                                        <h4>{{ $videoPosts[3]->title ?? 'Latest Video News' }}</h4>
-                                    </div>
-                                </div>
-                                <div class="single-video">
-                                    <iframe src="https://www.youtube.com/embed/0VxlQlacWV4" frameborder="0"
-                                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                        allowfullscreen></iframe>
-                                    <div class="video-intro">
-                                        <h4>{{ $videoPosts[4]->title ?? 'Latest Video News' }}</h4>
-                                    </div>
-                                </div>
+                                <h6 class="mt-2">{{ $videoPosts[1]->title ?? 'Sports Highlights' }}</h6>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- End Start youtube -->
+        </section>
 
-        <!--  Recent Articles start -->
-        <div class="recent-articles">
-            <div class="container">
-                <div class="recent-wrapper">
-                    <!-- section Tittle -->
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="section-tittle mb-30">
-                                <h3>Recent Articles</h3>
-                            </div>
-                        </div>
+        <!-- Replace the Recent Articles section with this improved version -->
+<div class="recent-articles">
+    <div class="container">
+        <div class="recent-wrapper">
+            <!-- section Tittle -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-tittle mb-30">
+                        <h3>Recent Articles</h3>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="recent-active dot-style d-flex dot-style">
-                                @foreach ($recentArticles as $post)
-                                    <div class="single-recent mb-100">
-                                        <div class="what-img">
-                                            <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('frontend/assets/img/news/recent' . $loop->iteration . '.jpg') }}"
-                                                alt="{{ $post->title }}">
-
-                                        </div>
-                                        <div class="what-cap">
-                                            <span class="color1">{{ $post->category->name }}</span>
-                                            <h4><a
-                                                    href="{{ route('visitor.post.details', $post->slug) }}">{{ $post->title }}</a>
-                                            </h4>
-                                        </div>
-                                    </div>
-                                @endforeach
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="recent-active dot-style d-flex dot-style">
+                        @foreach ($recentArticles as $post)
+                            <div class="single-recents">
+                                <div class="what-img">
+                                    <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('frontend/assets/img/news/recent' . $loop->iteration . '.jpg') }}"
+                                        alt="{{ $post->title }}">
+                                </div>
+                                <div class="what-cap">
+                                    <span class="color1">{{ $post->category->name }}</span>
+                                    <h4><a href="{{ route('visitor.post.details', $post->slug) }}">{{ $post->title }}</a></h4>
+                                </div>
                             </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Recent Articles End -->
+    </div>
+</div>
 
         <!-- Start pagination -->
-        <div class="pagination-area pb-45 text-center">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="single-wrap d-flex justify-content-center">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-start">
-                                    <li class="page-item"><a class="page-link" href="#"><span
-                                                class="flaticon-arrow roted"></span></a></li>
-                                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">02</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">03</a></li>
-                                    <li class="page-item"><a class="page-link" href="#"><span
-                                                class="flaticon-arrow right-arrow"></span></a></li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
+<div class="pagination-area pb-45 text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="single-wrap d-flex justify-content-center">
+                    @if(isset($paginatedPosts) && $paginatedPosts->hasPages())
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-start">
+                                {{-- Previous Page Link --}}
+                                @if ($paginatedPosts->onFirstPage())
+                                    <li class="page-item disabled"><span class="page-link"><span class="flaticon-arrow roted"></span></span></li>
+                                @else
+                                    <li class="page-item"><a class="page-link" href="{{ $paginatedPosts->previousPageUrl() }}"><span class="flaticon-arrow roted"></span></a></li>
+                                @endif
+
+                                {{-- Pagination Elements --}}
+                                @foreach ($paginatedPosts->getUrlRange(1, $paginatedPosts->lastPage()) as $page => $url)
+                                    @if ($page == $paginatedPosts->currentPage())
+                                        <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
+                                    @else
+                                        <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
+                                    @endif
+                                @endforeach
+
+                                {{-- Next Page Link --}}
+                                @if ($paginatedPosts->hasMorePages())
+                                    <li class="page-item"><a class="page-link" href="{{ $paginatedPosts->nextPageUrl() }}"><span class="flaticon-arrow right-arrow"></span></a></li>
+                                @else
+                                    <li class="page-item disabled"><span class="page-link"><span class="flaticon-arrow right-arrow"></span></span></li>
+                                @endif
+                            </ul>
+                        </nav>
+                    @endif
                 </div>
             </div>
         </div>
-        <!-- End pagination  -->
+    </div>
+</div>
+<!-- End pagination  -->
 
     </main>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize trending news ticker
+            $('#js-news').ticker({
+                speed: 0.10,
+                ajaxFeed: false,
+                feedType: 'json',
+                htmlFeed: true,
+                debugMode: false,
+                controls: true,
+                titleText: ''
+            });
+            
+            // Initialize Weekly News slider
+            $('.weekly-news-active').slick({
+                dots: true,
+                infinite: true,
+                speed: 500,
+                arrows: false,
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                autoplay: true,
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 991,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                    }
+                ]
+            });
+            
+            // Initialize Weekly2 News slider
+            $('.weekly2-news-active').slick({
+                dots: true,
+                infinite: true,
+                speed: 500,
+                arrows: false,
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                autoplay: true,
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 991,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                    }
+                ]
+            });
+            
+            // Initialize Recent Articles slider
+            $('.recent-active').slick({
+                dots: true,
+                infinite: true,
+                speed: 500,
+                arrows: false,
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                autoplay: true,
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 991,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
 @endsection

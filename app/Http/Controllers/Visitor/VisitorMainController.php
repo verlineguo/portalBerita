@@ -8,9 +8,13 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Models\User;
+use App\Notifications\CommentNotification;
+use App\Notifications\CommentReplyNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class VisitorMainController extends Controller
 {
@@ -115,7 +119,7 @@ class VisitorMainController extends Controller
         $post = Post::where('slug', $slug)->firstOrFail();
 
         // Create comment
-        Comment::create([
+        $comment = Comment::create([
             'post_id' => $post->id,
             'user_id' => Auth::id(), // Assuming the user is authenticated
             'comment' => $validated['comment'],
@@ -124,8 +128,32 @@ class VisitorMainController extends Controller
 
         // Increment comment count
         $post->comments += 1;
-        $post->save();
 
+        $post->save();
+        if ($request->parent_id) {
+            $parentComment = Comment::findOrFail($request->parent_id);
+            $parentAuthor = User::findOrFail($parentComment->user_id);
+            
+            // Notify the parent comment author about the reply
+            if ($parentAuthor->id !== Auth::id()) {
+                $parentAuthor->notify(new CommentReplyNotification($comment, $parentComment));
+            }
+        }
+        
+        // Notify the post author about the new comment
+        $postAuthor = User::findOrFail($post->writer_id);
+        if ($postAuthor->id !== Auth::id()) {
+            $postAuthor->notify(new CommentNotification($comment));
+        }
+        
+        // Notify admins about the new comment
+        $admins = User::where('role', 0)->get(); // Admin role is 0
+        foreach ($admins as $admin) {
+            if ($admin->id !== Auth::id()) {
+                $admin->notify(new CommentNotification($comment));
+            }
+        }
+        
         return redirect()->back()->with('success', 'Your comment has been submitted and is awaiting approval.');
     }
 

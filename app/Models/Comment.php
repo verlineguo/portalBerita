@@ -18,6 +18,9 @@ class Comment extends Model
         'status',
         
     ];
+    protected $casts = [
+        'status' => 'boolean',
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -27,4 +30,26 @@ class Comment extends Model
     {
         return $this->belongsTo(Post::class);
     }
+
+    public function parent()
+    {
+        return $this->belongsTo(Comment::class, 'parent_id');
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(Comment::class, 'parent_id');
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        $statuses = [
+            0 => 'Pending',
+            1 => 'Approved',
+            2 => 'Rejected'
+        ];
+        
+        return $statuses[$this->status] ?? 'Unknown';
+    }
+    
 }

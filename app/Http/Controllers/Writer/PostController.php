@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Writer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use App\Notifications\NewPostNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -77,6 +80,29 @@ class PostController extends Controller
 
         return redirect()->route('writer.post.manage')->with('success', 'Post created successfully! It will be published after review.');
     }
+
+    public function publish($id)
+    {
+        $post = Post::findOrFail($id);
+        $post->status = true;
+        $post->save();
+
+        // Notify admins about the new post
+        $admins = User::where('role', 0)->get();
+        Notification::send($admins, new NewPostNotification($post));
+
+        // Notify newsletter subscribers - if Newsletter model has a mailable
+        // This would typically be done using a job to avoid timeout
+        if ($post->status) {
+            // For email newsletters, we'd typically use a separate email service
+            // This is just an example of how to notify registered users who might want notifications
+            $subscribers = User::where('status', true)->get();
+            Notification::send($subscribers, new NewPostNotification($post));
+        }
+
+        return redirect()->back()->with('success', 'Artikel berhasil dipublikasikan.');
+    }
+
 
     public function show($id)
     {
@@ -185,4 +211,16 @@ class PostController extends Controller
         // Sync the tags with the post
         $post->tags()->sync($tagIds);
     }
+
+    public function detail($id)
+    {
+        $post = Post::with(['category', 'writer', 'tags'])->findOrFail($id);
+        $comments = Comment::where('post_id', $id)
+                         ->with('user')
+                         ->orderBy('created_at', 'desc')
+                         ->get();
+        
+        return view('writer.post.show', compact('post', 'comments'));
+    }
+
 }

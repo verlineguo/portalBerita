@@ -28,6 +28,79 @@
             color: #fff;
             text-decoration: none;
         }
+
+        <style>
+    .comments-area {
+        margin-top: 50px;
+    }
+    
+    .comment-title {
+        position: relative;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .comment-title:after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background-color: #ff656a;
+    }
+    
+    .comment-item {
+        transition: all 0.3s ease;
+    }
+    
+    .comment-item:hover {
+        transform: translateX(5px);
+    }
+    
+    .user-img img {
+        border: 3px solid #fff;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    
+    .comment-body {
+        border-left: 3px solid #ff656a;
+    }
+    
+    .comment-actions a {
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+    
+    .comment-actions a:hover {
+        text-decoration: none;
+        opacity: 0.7;
+    }
+    
+    .comment-form textarea {
+        border: 1px solid #ddd;
+        transition: all 0.3s ease;
+    }
+    
+    .comment-form textarea:focus {
+        border-color: #ff656a;
+        box-shadow: 0 0 0 0.2rem rgba(255, 101, 106, 0.25);
+    }
+    
+    .comment-form button {
+        background-color: #ff656a;
+        border-color: #ff656a;
+        transition: all 0.3s ease;
+    }
+    
+    .comment-form button:hover {
+        background-color: #e5595e;
+        border-color: #e5595e;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+</style>
+
     </style>
 @endsection
 @section('content')
@@ -136,42 +209,49 @@
                                     </div>
                                 </div>
 
-                                <!-- Comments -->
                                 <div class="comments-area mt-5">
-                                    <h3>{{ $comments->count() }} Comments</h3>
-
+                                    <h4 class="mb-4 comment-title">{{ $comments->count() }} Comments</h4>
+                                
                                     @foreach ($comments as $comment)
-                                        <div class="comment-item">
+                                        <div class="comment-item mb-4">
                                             <div class="d-flex">
-                                                <div class="user-img">
-                                                    <img src="{{ asset('frontend/assets/img/comment/user.png') }}"
-                                                        alt="">
+                                                <div class="user-img mr-3">
+                                                    <img src="{{ asset('frontend/assets/img/comment/user.png') }}" alt="" class="rounded-circle" width="60">
                                                 </div>
-                                                <div class="comment-body">
-                                                    <h5>{{ $comment->user->name }}</h5>
-                                                    <p class="comment-date">{{ $comment->created_at->format('M d, Y') }}
-                                                    </p>
-                                                    <p>{{ $comment->comment }}</p>
+                                                <div class="comment-body bg-light p-3 rounded w-100">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <h5 class="mb-0 font-weight-bold">{{ $comment->user->name }}</h5>
+                                                        <p class="comment-date text-muted mb-0"><i class="far fa-clock mr-1"></i>{{ $comment->created_at->format('M d, Y') }}</p>
+                                                    </div>
+                                                    <div class="comment-text">
+                                                        <p class="mb-1">{{ $comment->comment }}</p>
+                                                    </div>
+                                                    <div class="comment-actions mt-2">
+                                                        <a href="#" class="reply-btn text-primary"><i class="far fa-comment mr-1"></i>Reply</a>
+                                                        <a href="#" class="like-btn text-success ml-3"><i class="far fa-thumbs-up mr-1"></i>Like</a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     @endforeach
-
-                                    <!-- Comment form -->
+                                
+                                    <!-- Comment form with better styling -->
                                     @auth
                                         <div class="comment-form mt-5">
-                                            <h3>Leave a Comment</h3>
+                                            <h4 class="mb-4">Leave a Comment</h4>
                                             <form action="{{ route('visitor.post.comment', $post->slug) }}" method="POST">
                                                 @csrf
                                                 <div class="form-group">
-                                                    <textarea name="comment" class="form-control" rows="5" placeholder="Your Comment"></textarea>
+                                                    <textarea name="comment" class="form-control p-3" rows="5" placeholder="Share your thoughts about this post..."></textarea>
                                                 </div>
-                                                <button type="submit" class="btn btn-primary">Submit Comment</button>
+                                                <button type="submit" class="btn btn-primary px-4 py-2">
+                                                    <i class="far fa-paper-plane mr-2"></i>Post Comment
+                                                </button>
                                             </form>
                                         </div>
                                     @else
-                                        <div class="mt-5">
-                                            <p>Please <a href="{{ route('login') }}">login</a> to leave a comment.</p>
+                                        <div class="mt-5 p-4 bg-light rounded text-center">
+                                            <p class="mb-0">Please <a href="{{ route('login') }}" class="font-weight-bold text-primary">login</a> to join the discussion and leave a comment.</p>
                                         </div>
                                     @endauth
                                 </div>

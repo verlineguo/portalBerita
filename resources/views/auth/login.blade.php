@@ -31,7 +31,12 @@
 				<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
 					<div class="col mx-auto">
 						<div class="mb-4 text-center">
-							<img src="{{ asset("backend") }}/assets/images/logo-img.png" width="180" alt="" />
+							<svg width="250" height="80" xmlns="http://www.w3.org/2000/svg">
+								<rect width="200" height="60" fill="#ffffff"/>
+								<text x="20" y="40" font-family="Segoe UI, sans-serif" font-size="45" fill="#1a1a1a">
+								  <tspan fill="#e63946" font-weight="bold">Berita</tspan>kan
+								</text>
+							  </svg>
 						</div>
 						<div class="card">
 							<div class="card-body">
@@ -42,7 +47,7 @@
 										</p>
 									</div>
 									<div class="d-grid">
-										<a class="btn my-4 shadow-sm btn-white" href="javascript:;"> <span class="d-flex justify-content-center align-items-center">
+										<a class="btn my-4 shadow-sm btn-white" href="{{ route('auth.google') }}"> <span class="d-flex justify-content-center align-items-center">
                           <img class="me-2" src="{{ asset("backend") }}/assets/images/icons/search.svg" width="16" alt="Image Description">
                           <span>Sign in with Google</span>
 											</span>
