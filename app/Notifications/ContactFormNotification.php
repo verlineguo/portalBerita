@@ -55,7 +55,7 @@ class ContactFormNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'id' => $this->contact->id,
+            'contact_id' => $this->contact->id,
             'name' => $this->contact->name,
             'email' => $this->contact->email_address,
             'subject' => $this->contact->subject,

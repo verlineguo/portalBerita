@@ -1,5 +1,9 @@
-{{-- resources/views/visitor/notifications/index.blade.php --}}
 @extends('visitor.layouts.app')
+
+@section('styles')
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+@endsection
 
 @section('content')
 <div class="page-wrapper">
@@ -15,10 +19,7 @@
                 </nav>
             </div>
             <div class="ms-auto">
-                <form action="{{ route('notifications.markAllAsRead') }}" method="POST" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-sm btn-primary">Mark All as Read</button>
-                </form>
+                <button type="button" class="btn btn-sm btn-primary" id="markAllAsReadBtn">Mark All as Read</button>
             </div>
         </div>
 
@@ -46,7 +47,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if(isset($notification->data['comment_id']) && isset($notification->data['post_id']))
+                                        @if(isset($notification->data['comment_reply_id']) && isset($notification->data['post_id']))
                                             <strong>{{ $notification->data['user_name'] ?? 'Someone' }}</strong> replied to your comment on 
                                             "<a href="{{ url($notification->data['url']) }}">{{ $notification->data['post_title'] }}</a>"
                                         @else
@@ -64,18 +65,12 @@
                                     <td>
                                         <div class="d-flex">
                                             @if(!$notification->read_at)
-                                                <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST" class="me-2">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="submit" class="btn btn-sm btn-primary">Mark as Read</button>
-                                                </form>
+                                                <button type="button" class="btn btn-sm btn-primary me-2 mark-read-btn" 
+                                                        data-id="{{ $notification->id }}">Mark as Read</button>
                                             @endif
                                             <a href="{{ url($notification->data['url'] ?? '#') }}" class="btn btn-sm btn-info me-2">View</a>
-                                            <form action="{{ route('notifications.destroy', $notification->id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                            </form>
+                                            <button type="button" class="btn btn-sm btn-danger delete-btn" 
+                                                    data-id="{{ $notification->id }}">Delete</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -95,4 +90,114 @@
         </div>
     </div>
 </div>
+
+<!-- Hidden Forms for Sweet Alert actions -->
+<form id="markAllForm" action="{{ route('notifications.markAllAsRead') }}" method="POST" style="display: none;">
+    @csrf
+</form>
+
+<form id="markReadForm" method="POST" style="display: none;">
+    @csrf
+    @method('PUT')
+</form>
+
+<form id="deleteForm" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+@endsection
+
+@section('scripts')
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle Mark All as Read button
+        document.getElementById('markAllAsReadBtn').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Mark all as read?',
+                text: 'Are you sure you want to mark all notifications as read?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, mark all!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('markAllForm').submit();
+                }
+            });
+        });
+
+        // Handle Mark as Read buttons
+        document.querySelectorAll('.mark-read-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const notificationId = this.getAttribute('data-id');
+                const form = document.getElementById('markReadForm');
+                form.action = "{{ url('notifications') }}/" + notificationId + "/read";
+                
+                Swal.fire({
+                    title: 'Mark as read?',
+                    text: 'Are you sure you want to mark this notification as read?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, mark it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        // Handle Delete buttons
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const notificationId = this.getAttribute('data-id');
+                const form = document.getElementById('deleteForm');
+                form.action = "{{ url('notifications') }}/" + notificationId;
+                
+                Swal.fire({
+                    title: 'Delete notification?',
+                    text: 'This action cannot be undone!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        // Display flash messages using SweetAlert
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: "{{ session('success') }}",
+                timer: 3000,
+                showConfirmButton: false
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: "{{ session('error') }}",
+                timer: 3000,
+                showConfirmButton: false
+            });
+        @endif
+    });
+</script>
 @endsection

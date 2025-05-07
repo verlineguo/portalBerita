@@ -40,12 +40,12 @@ class NewsletterSubscriptionNotification extends Notification implements ShouldQ
     public function toArray(object $notifiable): array
     {
         return [
-            'id' => $this->newsletter->id,
+            'newsletter_id' => $this->newsletter->id,
             'email' => $this->newsletter->email,
             'type' => 'newsletter',
             'icon' => 'bx bx-send',
             'color' => 'warning',
-            'url' => '/admin/newsletters',
+            'url' => '/admin/newsletter/manage',
             'message' => 'New subscriber: ' . $this->newsletter->email
         ];
     }

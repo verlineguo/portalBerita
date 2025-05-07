@@ -31,8 +31,7 @@ class PostController extends Controller
         $categories = Category::where('status', 1)->get();
 
         // Penulis hanya dapat melihat post mereka sendiri
-        $query = Post::with(['category', 'tags'])
-            ->where('writer_id', Auth::id());
+        $query = Post::with(['category', 'tags'])->where('writer_id', Auth::id());
 
         if ($request->has('category') && $request->category != '') {
             $query->where('category_id', $request->category);
@@ -73,6 +72,10 @@ class PostController extends Controller
             'status' => 0, // Post dari penulis default draft (perlu persetujuan admin)
         ]);
 
+        // Notify admins about the new post
+        $admins = User::where('role', 0)->get();
+        Notification::send($admins, new NewPostNotification($post));
+
         // Handle tags
         if ($request->has('tags') && is_array($request->tags)) {
             $this->syncTags($post, $request->tags);
@@ -87,10 +90,6 @@ class PostController extends Controller
         $post->status = true;
         $post->save();
 
-        // Notify admins about the new post
-        $admins = User::where('role', 0)->get();
-        Notification::send($admins, new NewPostNotification($post));
-
         // Notify newsletter subscribers - if Newsletter model has a mailable
         // This would typically be done using a job to avoid timeout
         if ($post->status) {
@@ -103,14 +102,11 @@ class PostController extends Controller
         return redirect()->back()->with('success', 'Artikel berhasil dipublikasikan.');
     }
 
-
     public function show($id)
     {
         // Pastikan post dimiliki oleh penulis yang sedang login
-        $post = Post::with('tags')
-            ->where('writer_id', Auth::id())
-            ->findOrFail($id);
-            
+        $post = Post::with('tags')->where('writer_id', Auth::id())->findOrFail($id);
+
         $categories = Category::where('status', 1)->get();
         return view('writer.post.edit', compact('post', 'categories'));
     }
@@ -170,14 +166,14 @@ class PostController extends Controller
     {
         // Pastikan post dimiliki oleh penulis yang sedang login
         $post = Post::where('writer_id', Auth::id())->findOrFail($id);
-        
+
         if ($post->image) {
             Storage::disk('public')->delete($post->image);
         }
-        
+
         // Detach all tags before deleting the post
         $post->tags()->detach();
-        
+
         $post->delete();
 
         return redirect()->route('writer.post.manage')->with('success', 'Post deleted successfully!');
@@ -197,17 +193,17 @@ class PostController extends Controller
     private function syncTags($post, $tagNames)
     {
         $tagIds = [];
-        
+
         foreach ($tagNames as $tagName) {
             // Penulis hanya dapat menggunakan tag yang sudah ada
             $tag = Tag::firstWhere('name', $tagName);
-            
+
             // Jika tag tidak ditemukan, lewati
             if ($tag) {
                 $tagIds[] = $tag->id;
             }
         }
-        
+
         // Sync the tags with the post
         $post->tags()->sync($tagIds);
     }
@@ -215,12 +211,8 @@ class PostController extends Controller
     public function detail($id)
     {
         $post = Post::with(['category', 'writer', 'tags'])->findOrFail($id);
-        $comments = Comment::where('post_id', $id)
-                         ->with('user')
-                         ->orderBy('created_at', 'desc')
-                         ->get();
-        
+        $comments = Comment::where('post_id', $id)->with('user')->orderBy('created_at', 'desc')->get();
+
         return view('writer.post.show', compact('post', 'comments'));
     }
-
 }

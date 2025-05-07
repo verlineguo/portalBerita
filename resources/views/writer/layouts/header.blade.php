@@ -31,7 +31,7 @@
                     
                 </ul>
             </div>
-            <div class="user-box dropdown">
+            <div class="user-box dropdown ps-3">
                 <a class="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret" href="#"
                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     @if (auth()->user()->profile_picture)
@@ -50,8 +50,8 @@
                                 class="bx bx-user"></i><span>Profile</span></a>
                     </li>
                   
-                    <li><a class="dropdown-item" href="javascript:;"><i
-                                class='bx bx-home-circle'></i><span>Dashboard</span></a>
+                    <li><a class="dropdown-item" href="{{ route('writer.dashboard') }}"><i
+                        class='bx bx-home-circle'></i><span>Dashboard</span></a>
                     </li>
                     <li>
                         <div class="dropdown-divider mb-0"></div>

@@ -62,8 +62,7 @@
         </div>
     </div>
 
-    <h5 class="mb-0 text-uppercase">Comment Management</h5>
-    <hr />
+    <h5 class="mb-3 text-uppercase">Comment Management</h5>
 
 
     <div class="card">
@@ -139,4 +138,4 @@
 
     
 </script>
-@endsec
+@endsection

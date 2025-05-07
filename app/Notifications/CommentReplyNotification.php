@@ -59,14 +59,14 @@ class CommentReplyNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'comment_id' => $this->comment->id,
+            'comment_reply_id' => $this->comment->id,
             'user_id' => $this->comment->user_id,
             'user_name' => $this->comment->user->name,
             'post_id' => $this->comment->post_id,
             'post_title' => $this->comment->post->title,
             'comment' => $this->comment->comment,
             'parent_comment_id' => $this->parentComment->id,
-            'url' => '/post/' . $this->comment->post->slug . '#comment-' . $this->comment->id
+            'url' => '/visitor/post/' . $this->comment->post->slug . '#comment-' . $this->comment->id
         ];
     }
 }

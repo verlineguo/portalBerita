@@ -29,7 +29,6 @@
             text-decoration: none;
         }
 
-        <style>
     .comments-area {
         margin-top: 50px;
     }
@@ -99,7 +98,6 @@
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-</style>
 
     </style>
 @endsection
@@ -197,7 +195,7 @@
 
                                                     <div class="card-body">
                                                         <h5 class="card-title"><a
-                                                                href="{{ route('post.show', $relatedPost->slug) }}">{{ $relatedPost->title }}</a>
+                                                                href="{{ route('visitor.post.details', $relatedPost->slug) }}">{{ $relatedPost->title }}</a>
                                                         </h5>
                                                         <p class="card-text">
                                                             {{ Str::limit(strip_tags($relatedPost->description), 100) }}
@@ -209,53 +207,117 @@
                                     </div>
                                 </div>
 
-                                <div class="comments-area mt-5">
-                                    <h4 class="mb-4 comment-title">{{ $comments->count() }} Comments</h4>
                                 
-                                    @foreach ($comments as $comment)
-                                        <div class="comment-item mb-4">
-                                            <div class="d-flex">
-                                                <div class="user-img mr-3">
-                                                    <img src="{{ asset('frontend/assets/img/comment/user.png') }}" alt="" class="rounded-circle" width="60">
+                            @endif
+
+                            <div class="comments-area mt-5">
+                                <h4 class="mb-4 comment-title">{{ $comments->where('status', 1)->count() }} Comments</h4>
+                            
+                                @foreach ($comments->where('parent_id', null)->where('status', 1) as $comment)
+                                    <div class="comment-item mb-4" id="comment-{{ $comment->id }}">
+                                        <div class="d-flex">
+                                            <div class="user-img mr-3">
+                                                <img src="{{ asset('frontend/assets/img/Profile-PNG-Photo.png') }}" alt="" class="rounded-circle" width="60">
+                                            </div>
+                                            <div class="comment-body bg-light p-3 rounded w-100">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <h5 class="mb-0 font-weight-bold">{{ $comment->user->name }}</h5>
+                                                    <p class="comment-date text-muted mb-0"><i class="far fa-clock mr-1"></i>{{ $comment->created_at->format('M d, Y') }}</p>
                                                 </div>
-                                                <div class="comment-body bg-light p-3 rounded w-100">
-                                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                                        <h5 class="mb-0 font-weight-bold">{{ $comment->user->name }}</h5>
-                                                        <p class="comment-date text-muted mb-0"><i class="far fa-clock mr-1"></i>{{ $comment->created_at->format('M d, Y') }}</p>
-                                                    </div>
-                                                    <div class="comment-text">
-                                                        <p class="mb-1">{{ $comment->comment }}</p>
-                                                    </div>
-                                                    <div class="comment-actions mt-2">
-                                                        <a href="#" class="reply-btn text-primary"><i class="far fa-comment mr-1"></i>Reply</a>
-                                                        <a href="#" class="like-btn text-success ml-3"><i class="far fa-thumbs-up mr-1"></i>Like</a>
-                                                    </div>
+                                                <div class="comment-text">
+                                                    <p class="mb-1">{{ $comment->comment }}</p>
                                                 </div>
+                                                <div class="comment-actions mt-2">
+                                                    <a href="#" class="reply-btn text-primary" data-comment-id="{{ $comment->id }}">
+                                                        <i class="far fa-comment mr-1"></i>Reply
+                                                    </a>
+                                                    <a href="#" class="like-btn text-success ml-3"><i class="far fa-thumbs-up mr-1"></i>Like</a>
+                                                </div>
+                                                
+                                                <!-- Reply form (hidden by default) -->
+                                                <div class="reply-form mt-3" id="reply-form-{{ $comment->id }}" style="display: none;">
+                                                    @auth
+                                                        <form action="{{ route('visitor.post.comment', $post->slug) }}" method="POST" class="bg-white p-3 rounded border">
+                                                            @csrf
+                                                            <input type="hidden" name="parent_id" value="{{ $comment->id }}">
+                                                            <div class="form-group">
+                                                                <textarea name="comment" class="form-control" rows="3" placeholder="Write your reply..."></textarea>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between">
+                                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                                    <i class="far fa-paper-plane mr-1"></i>Post Reply
+                                                                </button>
+                                                                <button type="button" class="btn btn-sm btn-light cancel-reply" data-comment-id="{{ $comment->id }}">
+                                                                    Cancel
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    @else
+                                                        <div class="bg-light p-2 rounded text-center">
+                                                            <p class="mb-0 small">Please <a href="{{ route('login') }}" class="font-weight-bold text-primary">login</a> to reply.</p>
+                                                        </div>
+                                                    @endauth
+                                                </div>
+                                                
+                                                <!-- Replies to this comment -->
+                                                @php
+                                                    $approvedReplies = $comment->replies()->where('status', 1)->get();
+                                                @endphp
+                                                
+                                                @if($approvedReplies->count() > 0)
+                                                    <div class="replies-container ml-4 mt-3">
+                                                        @foreach($approvedReplies as $reply)
+                                                            <div class="reply-item mb-3 border-left pl-3">
+                                                                <div class="d-flex">
+                                                                    <div class="user-img mr-2">
+                                                                        <img src="{{ asset('frontend/assets/img/Profile-PNG-Photo.png') }}" alt="" class="rounded-circle" width="40">
+                                                                    </div>
+                                                                    <div class="reply-body bg-white p-2 rounded w-100">
+                                                                        <div class="d-flex justify-content-between align-items-center">
+                                                                            <h6 class="mb-0 font-weight-bold">{{ $reply->user->name }}</h6>
+                                                                            <p class="reply-date text-muted mb-0 small"><i class="far fa-clock mr-1"></i>{{ $reply->created_at->format('M d, Y') }}</p>
+                                                                        </div>
+                                                                        <div class="reply-text">
+                                                                            <p class="mb-1 small">{{ $reply->comment }}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
-                                    @endforeach
-                                
-                                    <!-- Comment form with better styling -->
-                                    @auth
-                                        <div class="comment-form mt-5">
-                                            <h4 class="mb-4">Leave a Comment</h4>
-                                            <form action="{{ route('visitor.post.comment', $post->slug) }}" method="POST">
-                                                @csrf
-                                                <div class="form-group">
-                                                    <textarea name="comment" class="form-control p-3" rows="5" placeholder="Share your thoughts about this post..."></textarea>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary px-4 py-2">
-                                                    <i class="far fa-paper-plane mr-2"></i>Post Comment
-                                                </button>
-                                            </form>
-                                        </div>
-                                    @else
-                                        <div class="mt-5 p-4 bg-light rounded text-center">
-                                            <p class="mb-0">Please <a href="{{ route('login') }}" class="font-weight-bold text-primary">login</a> to join the discussion and leave a comment.</p>
-                                        </div>
-                                    @endauth
-                                </div>
-                            @endif
+                                    </div>
+                                @endforeach
+                            
+                                <!-- Pending comments message -->
+                                @if(Auth::check() && $comments->where('user_id', Auth::id())->where('status', 0)->count() > 0)
+                                    <div class="alert alert-info mb-4">
+                                        <p class="mb-0"><i class="fas fa-info-circle mr-2"></i>You have {{ $comments->where('user_id', Auth::id())->where('status', 0)->count() }} pending comment(s) awaiting approval.</p>
+                                    </div>
+                                @endif
+                            
+                                <!-- Main comment form -->
+                                @auth
+                                    <div class="comment-form mt-5">
+                                        <h4 class="mb-4">Leave a Comment</h4>
+                                        <form action="{{ route('visitor.post.comment', $post->slug) }}" method="POST">
+                                            @csrf
+                                            <div class="form-group">
+                                                <textarea name="comment" class="form-control p-3" rows="5" placeholder="Share your thoughts about this post..."></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary px-4 py-2">
+                                                <i class="far fa-paper-plane mr-2"></i>Post Comment
+                                            </button>
+                                        </form>
+                                    </div>
+                                @else
+                                    <div class="mt-5 p-4 bg-light rounded text-center">
+                                        <p class="mb-0">Please <a href="{{ route('login') }}" class="font-weight-bold text-primary">login</a> to join the discussion and leave a comment.</p>
+                                    </div>
+                                @endauth
+                            </div>
                         </div>
                         <div class="col-lg-4">
                             <!-- Advertisement -->
@@ -295,4 +357,24 @@
         </div>
     </main>
 
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        // Show reply form when Reply button is clicked
+        $('.reply-btn').click(function(e) {
+            e.preventDefault();
+            var commentId = $(this).data('comment-id');
+            $('#reply-form-' + commentId).slideDown();
+        });
+        
+        // Hide reply form when Cancel button is clicked
+        $('.cancel-reply').click(function(e) {
+            e.preventDefault();
+            var commentId = $(this).data('comment-id');
+            $('#reply-form-' + commentId).slideUp();
+        });
+    });
+</script>
 @endsection

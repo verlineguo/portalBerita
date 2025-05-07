@@ -42,7 +42,7 @@ class NewPostNotification extends Notification implements ShouldQueue
             ->line('Artikel baru telah diterbitkan oleh ' . $this->post->writer->name)
             ->line('Judul: ' . $this->post->title)
             ->line('Kategori: ' . $this->post->category->name)
-            ->action('Baca Artikel', url('/post/' . $this->post->slug))
+            ->action('Baca Artikel', url('/visitor/post/' . $this->post->slug))
             ->line('Terima kasih telah berlangganan newsletter kami!');
     }
 
@@ -54,7 +54,7 @@ class NewPostNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'id' => $this->post->id,
+            'post_id' => $this->post->id,
             'title' => $this->post->title,
             'writer_id' => $this->post->writer_id,
             'writer_name' => $this->post->writer->name,
@@ -62,7 +62,7 @@ class NewPostNotification extends Notification implements ShouldQueue
             'type' => 'post',
             'icon' => 'bx bx-file',
             'color' => 'success',
-            'url' => '/post/' . $this->post->slug
+            'url' => '/visitor/post' . $this->post->slug
         ];
     }
 }

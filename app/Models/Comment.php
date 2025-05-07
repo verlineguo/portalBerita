@@ -16,6 +16,7 @@ class Comment extends Model
         'post_id',
         'comment',
         'status',
+        'parent_id',
         
     ];
     protected $casts = [

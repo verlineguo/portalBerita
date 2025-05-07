@@ -109,53 +109,72 @@ class VisitorMainController extends Controller
     }
 
     public function storeComment(Request $request, $slug)
-    {
-        // Validate request
-        $validated = $request->validate([
-            'comment' => 'required|string',
-        ]);
-
-        // Get the post
-        $post = Post::where('slug', $slug)->firstOrFail();
-
-        // Create comment
-        $comment = Comment::create([
-            'post_id' => $post->id,
-            'user_id' => Auth::id(), // Assuming the user is authenticated
-            'comment' => $validated['comment'],
-            'status' => 0, // Pending approval
-        ]);
-
-        // Increment comment count
-        $post->comments += 1;
-
-        $post->save();
-        if ($request->parent_id) {
-            $parentComment = Comment::findOrFail($request->parent_id);
-            $parentAuthor = User::findOrFail($parentComment->user_id);
-            
-            // Notify the parent comment author about the reply
-            if ($parentAuthor->id !== Auth::id()) {
-                $parentAuthor->notify(new CommentReplyNotification($comment, $parentComment));
-            }
-        }
-        
-        // Notify the post author about the new comment
-        $postAuthor = User::findOrFail($post->writer_id);
-        if ($postAuthor->id !== Auth::id()) {
-            $postAuthor->notify(new CommentNotification($comment));
-        }
-        
-        // Notify admins about the new comment
-        $admins = User::where('role', 0)->get(); // Admin role is 0
-        foreach ($admins as $admin) {
-            if ($admin->id !== Auth::id()) {
-                $admin->notify(new CommentNotification($comment));
-            }
-        }
-        
-        return redirect()->back()->with('success', 'Your comment has been submitted and is awaiting approval.');
+{
+    // Validate request
+    $validationRules = [
+        'comment' => 'required|string|max:1000',
+    ];
+    
+    // Add validation for parent_id if it exists in the request
+    if ($request->has('parent_id')) {
+        $validationRules['parent_id'] = 'required|exists:comment,id';
     }
+    
+    $validated = $request->validate($validationRules);
+    
+    // Get the post
+    $post = Post::where('slug', $slug)->firstOrFail();
+    
+    // Create comment with all necessary data
+    $commentData = [
+        'post_id' => $post->id,
+        'user_id' => Auth::id(),
+        'comment' => $validated['comment'],
+        'status' => 0, // Pending approval
+    ];
+    
+    // Add parent_id if this is a reply
+    if ($request->has('parent_id')) {
+        $commentData['parent_id'] = $validated['parent_id'];
+    }
+    
+    // Create the comment
+    $comment = Comment::create($commentData);
+    
+    // Increment comment count
+    $post->comments += 1;
+    $post->save();
+    
+    // Handle notifications for replies
+    if ($request->has('parent_id')) {
+        $parentComment = Comment::findOrFail($request->parent_id);
+        $parentAuthor = User::findOrFail($parentComment->user_id);
+        
+        // Notify the parent comment author about the reply
+        if ($parentAuthor->id !== Auth::id()) {
+            $parentAuthor->notify(new CommentReplyNotification($comment, $parentComment));
+        }
+    }
+    
+    // Notify the post author about the new comment
+    $postAuthor = User::findOrFail($post->writer_id);
+    if ($postAuthor->id !== Auth::id()) {
+        $postAuthor->notify(new CommentNotification($comment));
+    }
+    
+    // Notify admins about the new comment
+    $admins = User::where('role', 0)->get(); // Admin role is 0
+    foreach ($admins as $admin) {
+        if ($admin->id !== Auth::id()) {
+            $admin->notify(new CommentNotification($comment));
+        }
+    }
+    
+    return redirect()->back()->with('success', 'Your comment has been submitted and is awaiting approval.');
+}
+
+
+    
 
     public function about()
     {
@@ -170,5 +189,57 @@ class VisitorMainController extends Controller
         $popularPosts = Post::where('status', 1)->orderBy('views', 'desc')->take(5)->get();
 
         return view('visitor.tag_posts', compact('tag', 'posts', 'categories', 'popularPosts'));
+    }
+
+    public function latestNews()
+    {
+        // Get the latest news (most recent posts)
+        $latestPosts = Post::where('status', 1)
+                        ->orderBy('created_at', 'desc')
+                        ->take(6)
+                        ->get();
+        
+        // Get trending news (posts with most views)
+        $trendingPosts = Post::where('status', 1)
+                        ->orderBy('views', 'desc')
+                        ->take(5)
+                        ->get();
+        
+        // Get posts by category
+        $categories = Category::where('status', 1)->get();
+        $postsByCategory = [];
+        
+        foreach ($categories as $category) {
+            $postsByCategory[$category->id] = Post::where('status', 1)
+                                            ->where('category_id', $category->id)
+                                            ->orderBy('created_at', 'desc')
+                                            ->take(4)
+                                            ->get();
+        }
+        
+        // Get popular tags
+        $popularTags = Tag::where('status', 1)
+                        ->take(10)
+                        ->get();
+        
+        // Get sidebar advertisement
+        $sidebarAd = Advertisement::where('position', 'sidebar')
+                                ->where('status', 1)
+                                ->first();
+        
+        // Get featured post (post with highest view count)
+        $featuredPost = Post::where('status', 1)
+                        ->orderBy('views', 'desc')
+                        ->first();
+        
+        return view('visitor.latest_news', compact(
+            'latestPosts', 
+            'trendingPosts', 
+            'categories', 
+            'postsByCategory', 
+            'popularTags',
+            'sidebarAd',
+            'featuredPost'
+        ));
     }
 }

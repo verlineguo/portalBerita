@@ -58,7 +58,7 @@ class CommentNotification extends Notification implements ShouldQueue
         $post = $this->comment->post;
         
         return [
-            'id' => $this->comment->id,
+            'comment_id' => $this->comment->id,
             'user_id' => $this->comment->user_id,
             'user_name' => $this->comment->user->name,
             'post_id' => $post->id,

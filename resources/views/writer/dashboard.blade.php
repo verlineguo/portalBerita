@@ -148,7 +148,7 @@
                 </div>
             </div>
         </div><!--end row-->
-        
+
         <!-- Quick Access Buttons -->
         <div class="row mt-3">
             <div class="col-12">
@@ -159,7 +159,7 @@
                                 <h5 class="mb-0">Quick Actions</h5>
                             </div>
                         </div>
-                        <hr/>
+                        <hr />
                         <div class="row text-center">
                             <div class="col-4">
                                 <a href="{{ route('writer.post.create') }}" class="btn btn-primary px-5 radius-30">
@@ -194,8 +194,10 @@
                             <i class="bx bx-dots-horizontal-rounded font-22 text-option"></i>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('writer.post.manage') }}">View all my posts</a></li>
-                            <li><a class="dropdown-item" href="{{ route('writer.post.create') }}">Create new post</a></li>
+                            <li><a class="dropdown-item" href="{{ route('writer.post.manage') }}">View all my posts</a>
+                            </li>
+                            <li><a class="dropdown-item" href="{{ route('writer.post.create') }}">Create new post</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -224,10 +226,9 @@
                                     <td>{{ $post->created_at->format('d M Y') }}</td>
                                     <td>
                                         @if ($post->status)
-                                            <span
-                                                class="badge bg-gradient-quepal text-white shadow-sm w-100">Published</span>
+                                            <span class="badge bg-success text-white shadow-sm w-100">Published</span>
                                         @else
-                                            <span class="badge bg-gradient-bloody text-white shadow-sm w-100">Draft</span>
+                                            <span class="badge bg-warning text-white shadow-sm w-100">Draft</span>
                                         @endif
                                     </td>
                                     <td>
@@ -293,18 +294,23 @@
                                     <td>{{ Str::limit($comment->comment, 30) }}</td>
                                     <td>{{ $comment->created_at->format('d M Y') }}</td>
                                     <td>
-                                        @if ($comment->status)
-                                            <span class="badge bg-gradient-quepal text-white shadow-sm w-100">Approved</span>
+                                       
+                                        @if ($comment->status == 0)
+                                            <span class="badge bg-warning">Pending</span>
+                                        @elseif ($comment->status == 1)
+                                            <span class="badge bg-success">Visible</span>
                                         @else
-                                            <span class="badge bg-gradient-bloody text-white shadow-sm w-100">Pending</span>
+                                            <span class="badge bg-danger">Hidden</span>
                                         @endif
                                     </td>
                                     <td>
                                         <div class="d-flex order-actions">
-                                            <a href="{{ route('writer.post.view', $comment->post->id) }}" class="ms-1 text-info">
+                                            <a href="{{ route('writer.post.detail', $comment->post->id) }}"
+                                                class="ms-1 text-info">
                                                 <i class="bx bxs-show"></i>
                                             </a>
-                                            <a href="{{ route('writer.comments', $comment->id) }}" class="ms-2 text-primary">
+                                            <a href="{{ route('writer.comments', $comment->id) }}"
+                                                class="ms-2 text-primary">
                                                 <i class="bx bxs-message-rounded-dots"></i>
                                             </a>
                                         </div>

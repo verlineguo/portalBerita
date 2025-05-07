@@ -27,22 +27,18 @@ use App\Http\Controllers\AuthGoogleController;
 Route::get('/auth/google', [AuthGoogleController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [AuthGoogleController::class, 'handleGoogleCallback']);
 
-
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/dashboard/search', [App\Http\Controllers\SearchController::class, 'dashboardSearch']);
 });
 
 Route::get('/{role}/notifications', [NotificationController::class, 'index'])
-        ->where('role', 'admin|writer|visitor')
-        ->name('notifications.index');
-    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])
-        ->name('notifications.read');
-    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])
-        ->name('notifications.markAllAsRead');
-    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])
-        ->name('notifications.getUnreadCount');
-    Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications'])
-        ->name('notifications.getUnreadNotifications');
+    ->where('role', 'admin|writer|visitor')
+    ->name('notifications.index');
+Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.getUnreadCount');
+Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications'])->name('notifications.getUnreadNotifications');
+Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 
 Route::middleware(['auth', 'verified', 'rolemanager:admin'])->group(function () {
     Route::prefix('admin')->group(function () {
@@ -169,12 +165,12 @@ Route::prefix('visitor')->group(function () {
         Route::get('/page', 'index')->name('visitor.page');
         Route::get('/post/{slug}', 'show')->name('visitor.post.details');
         Route::post('/post/{slug}/comment', 'storeComment')->name('visitor.post.comment')->middleware('auth');
-        Route::get('/latestnews', 'index')->name('visitor.latest_news');
+
+        Route::get('/latestnews', 'latestNews')->name('visitor.latest_news');
         Route::get('/settings', 'setting')->name('visitor.settings');
         Route::get('/comment/history', 'comment_history')->middleware('auth')->name('visitor.comment.history');
         Route::get('/about', 'about')->name('visitor.about');
         Route::get('/tag/{name}', 'tagPosts')->name('tag.posts');
-
     });
     Route::controller(VisitorNewsletterController::class)->group(function () {
         Route::post('/newsletter', 'store')->name('visitor.newsletter.store');
@@ -188,9 +184,7 @@ Route::prefix('visitor')->group(function () {
         Route::post('/contact', 'store')->name('visitor.contact.store');
     });
 
-    Route::controller(VisitorPostController::class)->group(function () {
-        Route::get('/latestnews', 'index')->name('visitor.latest_news');
-    });
+    
 });
 
 require __DIR__ . '/auth.php';
