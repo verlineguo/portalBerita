@@ -8,7 +8,7 @@ use App\Models\Post;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\Comment;
-use App\Models\Newsletter;
+use App\Models\NewsLetter;
 use App\Models\Contact;
 use App\Models\Advertisement;
 use Carbon\Carbon;
@@ -94,8 +94,8 @@ class AdminMainController extends Controller
         $commentsPercentage = $previousCommentsPerPost > 0 ? round((($commentsPerPost - $previousCommentsPerPost) / $previousCommentsPerPost) * 100) : 0;
 
         // Newsletter subscribers
-        $newsletterCount = Newsletter::count();
-        $previousNewsletterCount = Newsletter::where('created_at', '<', Carbon::now()->subDays(7))->count();
+        $newsletterCount = NewsLetter::count();
+        $previousNewsletterCount = NewsLetter::where('created_at', '<', Carbon::now()->subDays(7))->count();
         $newsletterPercentage = $previousNewsletterCount > 0 ? round((($newsletterCount - $previousNewsletterCount) / $previousNewsletterCount) * 100) : 0;
 
         // Contact messages

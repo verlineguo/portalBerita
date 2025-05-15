@@ -18,7 +18,7 @@ class NewsletterController extends Controller
             'email' => 'required|email',
         ]);
 
-        $newsletter = Newsletter::create([
+        $newsletter = NewsLetter::create([
             'email' => $request->email,
             'status' => true,
         ]);
@@ -40,7 +40,7 @@ class NewsletterController extends Controller
             'email' => 'required|email|exists:newsletter,email',
         ]);
 
-        $newsletter = Newsletter::where('email', $request->email)->first();
+        $newsletter = NewsLetter::where('email', $request->email)->first();
         $newsletter->delete();
 
         return redirect()->back()->with('success', 'Anda berhasil berhenti berlangganan newsletter kami.');
