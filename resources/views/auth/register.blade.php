@@ -9,7 +9,6 @@
 	<link rel="icon" href="{{ asset("backend") }}/assets/images/favicon-32x32.png" type="image/png" />
 	<!--plugins-->
 	<link href="{{ asset("backend") }}/assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
-	<link href="{{ asset("backend") }}/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
 	<link href="{{ asset("backend") }}/assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
 	<!-- loader-->
 	<link href="{{ asset("backend") }}/assets/css/pace.min.css" rel="stylesheet" />
@@ -96,6 +95,8 @@
 	<!-- Bootstrap JS -->
 	<script src="{{ asset("backend") }}/assets/js/bootstrap.bundle.min.js"></script>
 	<!--plugins-->
+	    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 	<script src="{{ asset("backend") }}/assets/plugins/simplebar/js/simplebar.min.js"></script>
 	<script src="{{ asset("backend") }}/assets/plugins/metismenu/js/metisMenu.min.js"></script>
 	<!--Password show & hide js -->
