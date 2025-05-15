@@ -47,7 +47,6 @@ class NotificationController extends Controller
         return redirect()->back();
     }
 
-
     public function getUnreadCount()
     {
         $user = Auth::user();

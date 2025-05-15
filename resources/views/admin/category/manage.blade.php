@@ -83,7 +83,7 @@
                     <table id="categoryTable" class="table table-striped">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>No</th>
                                 <th>Name</th>
                                 <th>Status</th>
                                 <th>Action</th>

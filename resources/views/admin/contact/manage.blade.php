@@ -75,7 +75,7 @@
                     <table id="datatable" class="table table-striped" style="width:100%">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>No</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Message</th>
@@ -86,7 +86,7 @@
                         <tbody>
                             @foreach ($contacts as $contact)
                                 <tr>
-                                    <td>{{ $contact->id }}</td>
+                                    <td>{{ $loop->iteration}}</td>
                                     <td>{{ $contact->name }}</td>
                                     <td>{{ $contact->email_address }}</td>
                                     <td>{{ Str::limit($contact->message, 50) }}</td>

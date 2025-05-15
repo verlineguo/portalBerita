@@ -75,7 +75,7 @@
                     <table id="newsletterTable" class="table table-striped" style="width:100%">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>No</th>
                                 <th>Email</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -84,7 +84,7 @@
                         <tbody>
                             @foreach ($newsletters as $newsletter)
                                 <tr>
-                                    <td>{{ $newsletter->id }}</td>
+                                    <td>{{{ $loop->iteration }}}</td>
                                     <td>{{ $newsletter->email }}</td>
                                     <td>
                                         @if ($newsletter->status == 1)

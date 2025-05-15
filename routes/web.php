@@ -17,28 +17,35 @@ use App\Http\Controllers\Writer\CommentController as WriterCommentController;
 use App\Http\Controllers\Visitor\NewsletterController as VisitorNewsletterController;
 use App\Http\Controllers\Visitor\ContactController as VisitorContactController;
 use App\Http\Controllers\Visitor\CategoryController as VisitorCategoryController;
-use App\Http\Controllers\Visitor\PostController as VisitorPostController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Visitor\VisitorMainController;
 use App\Http\Controllers\Writer\WriterMainController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthGoogleController;
 
-Route::get('/auth/google', [AuthGoogleController::class, 'redirectToGoogle'])->name('auth.google');
-Route::get('/auth/google/callback', [AuthGoogleController::class, 'handleGoogleCallback']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/dashboard/search', [App\Http\Controllers\SearchController::class, 'dashboardSearch']);
+Route::controller(AuthGoogleController::class)->group(function () {
+    Route::get('/auth/google', 'redirectToGoogle')->name('auth.google');
+    Route::get('/auth/google/callback',  'handleGoogleCallback');    
 });
 
-Route::get('/{role}/notifications', [NotificationController::class, 'index'])
-    ->where('role', 'admin|writer|visitor')
-    ->name('notifications.index');
-Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
-Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.getUnreadCount');
-Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications'])->name('notifications.getUnreadNotifications');
-Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+
+Route::controller(NotificationController::class)->group(function () {
+    Route::get('/{role}/notifications', 'index')->where('role', 'admin|writer|visitor')->name('notifications.index');
+    Route::put('/notifications/{id}/read',  'markAsRead')->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-as-read', 'markAllAsRead')->name('notifications.markAllAsRead');
+    Route::get('/notifications/unread-count',  'getUnreadCount')->name('notifications.getUnreadCount');
+    Route::get('/notifications/unread',  'getUnreadNotifications')->name('notifications.getUnreadNotifications');
+    Route::delete('/notifications/{id}',  'destroy')->name('notifications.destroy');
+
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::controller(SearchController::class)->group(function () {
+        Route::get('/dashboard/search',  'dashboardSearch');
+    });
+});
 
 Route::middleware(['auth', 'verified', 'rolemanager:admin'])->group(function () {
     Route::prefix('admin')->group(function () {
