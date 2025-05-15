@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\admin\AdminMainController;
+use App\Http\Controllers\Admin\AdminMainController;
 use App\Http\Controllers\Admin\AdvertisementController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CommentController;
