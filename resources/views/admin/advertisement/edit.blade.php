@@ -31,7 +31,7 @@
                                 <label for="image" class="form-label">Advertisement Image</label>
                                 <input type="file" id="image" name="image" class="form-control" accept="image/*"
                                     onchange="previewImage(event)">
-                                <img id="image-preview" src="{{ asset('storage/' . $advertisement->image) }}" class="mt-3"
+                                <img id="image-preview" src="{{ asset($advertisement->image) }}" class="mt-3"
                                     width="200">
                             </div>
 

@@ -21,7 +21,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 @if($post->image)
-                                <img src="{{ asset('storage/posts/' . $post->image) }}" alt="{{ $post->title }}" class="img-fluid">
+                                <img src="{{ asset($post->image) }}" alt="{{ $post->title }}" class="img-fluid">
                                 @else
                                 <img src="{{ asset('frontend/assets/img/news/whatNews1.jpg') }}" alt="{{ $post->title }}" class="img-fluid">
                                 @endif

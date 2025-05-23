@@ -208,7 +208,7 @@
                             <!-- Trending Top -->
                             <div class="trending-top mb-30">
                                 <div class="trend-top-img">
-                                    <img src="{{ $featuredPost->image ? asset('storage/' . $featuredPost->image) : asset('frontend/assets/img/trending/trending_top.jpg') }}"
+                                    <img src="{{ $featuredPost->image ? asset($featuredPost->image) : asset('frontend/assets/img/trending/trending_top.jpg') }}"
                                         alt="{{ $featuredPost->title }}">
                                     <div class="trend-top-cap">
                                         <span>{{ $featuredPost->category->name ?? 'Trending' }}</span>
@@ -225,7 +225,7 @@
                                         <div class="col-lg-4">
                                             <div class="single-bottom mb-35">
                                                 <div class="trend-bottom-img mb-30">
-                                                    <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('frontend/assets/img/trending/trend_bottom.jpg') }}"
+                                                    <img src="{{ $post->image ? asset($post->image) : asset('frontend/assets/img/trending/trend_bottom.jpg') }}"
                                                         alt="{{ $post->title }}">
                                                 </div>
                                                 <div class="trend-bottom-cap">
@@ -246,7 +246,7 @@
                             @foreach ($rightSidePosts as $post)
                                 <div class="trand-right-single d-flex">
                                     <div class="trand-right-img">
-                                        <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('frontend/assets/img/trending/right' . $loop->iteration . '.jpg') }}"
+                                        <img src="{{ $post->image ? asset($post->image) : asset('frontend/assets/img/trending/right' . $loop->iteration . '.jpg') }}"
                                             alt="{{ $post->title }}">
                                     </div> <!-- Add this closing div -->
                                     <div class="trand-right-cap">
@@ -282,7 +282,7 @@
                                 @foreach ($weeklyTopNews as $post)
                                     <div class="weekly-single {{ $loop->first ? 'active' : '' }}">
                                         <div class="weekly-img">
-                                            <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('frontend/assets/img/news/weeklyNews' . $loop->iteration . '.jpg') }}"
+                                            <img src="{{ $post->image ? asset($post->image) : asset('frontend/assets/img/news/weeklyNews' . $loop->iteration . '.jpg') }}"
                                                 alt="{{ $post->title }}">
                                         </div>
                                         <div class="weekly-caption">
@@ -345,7 +345,7 @@
                                                     <div class="col-lg-6 col-md-6">
                                                         <div class="single-what-news mb-100">
                                                             <div class="what-img">
-                                                                <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('frontend/assets/img/news/whatNews' . $loop->iteration . '.jpg') }}"
+                                                                <img src="{{ $post->image ? asset($post->image) : asset('frontend/assets/img/news/whatNews' . $loop->iteration . '.jpg') }}"
                                                                     alt="{{ $post->title }}">
                                                             </div>
                                                             <div class="what-cap">
@@ -371,7 +371,7 @@
                                                         <div class="col-lg-6 col-md-6">
                                                             <div class="single-what-news mb-100">
                                                                 <div class="what-img">
-                                                                    <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('frontend/assets/img/news/whatNews' . $loop->iteration . '.jpg') }}"
+                                                                    <img src="{{ $post->image ? asset($post->image) : asset('frontend/assets/img/news/whatNews' . $loop->iteration . '.jpg') }}"
                                                                         alt="{{ $post->title }}">
 
                                                                 </div>
@@ -427,7 +427,7 @@
                                 @if ($advertisement && $advertisement->status)
                                     <div class="text-center">
                                         <a href="{{ $advertisement->url }}" target="_blank">
-                                            <img src="{{ asset('storage/' . $advertisement->image) }}" alt="Advertisement" class="img-fluid rounded">
+                                            <img src="{{ asset($advertisement->image) }}" alt="Advertisement" class="img-fluid rounded">
                                         </a>
                                     </div>
                                 @else
@@ -461,7 +461,7 @@
                                 @foreach ($weekly2Posts as $post)
                                     <div class="weekly2-single">
                                         <div class="weekly2-img">
-                                            <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('frontend/assets/img/news/weekly2News' . $loop->iteration . '.jpg') }}"
+                                            <img src="{{ $post->image ? asset($post->image) : asset('frontend/assets/img/news/weekly2News' . $loop->iteration . '.jpg') }}"
                                                 alt="{{ $post->title }}">
 
                                         </div>
@@ -541,7 +541,7 @@
                         @foreach ($recentArticles as $post)
                             <div class="single-recents">
                                 <div class="what-img">
-                                    <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('frontend/assets/img/news/recent' . $loop->iteration . '.jpg') }}"
+                                    <img src="{{ $post->image ? asset($post->image) : asset('frontend/assets/img/news/recent' . $loop->iteration . '.jpg') }}"
                                         alt="{{ $post->title }}">
                                 </div>
                                 <div class="what-cap">

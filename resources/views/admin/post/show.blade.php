@@ -86,7 +86,7 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="position-relative">
-                            <img src="{{ asset('storage/' . $post->image) }}" class="img-fluid rounded"
+                            <img src="{{ asset($post->image) }}" class="img-fluid rounded"
                                 alt="{{ $post->title }}">
                             <div class="position-absolute bottom-0 end-0 p-2">
                                 <span class="badge bg-{{ $post->status ? 'success' : 'warning' }}">

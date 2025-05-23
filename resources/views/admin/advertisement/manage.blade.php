@@ -91,7 +91,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>
-                                        <img src="{{ asset('storage/' . $advertisement->image) }}" width="200"
+                                        <img src="{{ asset($advertisement->image) }}" width="200"
                                             alt="Advertisement Image">
                                     </td>
                                     <td>{{ ucfirst($advertisement->position) }}</td>

@@ -132,7 +132,7 @@
                             <input type="file" class="form-control" id="image" name="image" accept="image/*" onchange="previewImage(event)">
                             @if ($post->image)
                                 <div class="mt-2">
-                                    <img src="{{ asset('storage/' . $post->image) }}" id="image-preview" width="200" alt="Current Image" style="border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
+                                    <img src="{{ asset($post->image) }}" id="image-preview" width="200" alt="Current Image" style="border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
                                 </div>
                             @else
                                 <img id="image-preview" src="" class="mt-3 d-none" width="200" style="border: 1px solid #ddd; padding: 5px; border-radius: 5px;">

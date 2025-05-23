@@ -287,7 +287,7 @@
                             <!-- Trending Top -->
                             <div class="trending-top mb-30">
                                 <div class="trend-top-img">
-                                    <img src="{{ asset('storage/' . $featuredPost->image) }}"
+                                    <img src="{{ asset($featuredPost->image) }}"
                                         alt="{{ $featuredPost->title }}">
                                     <div class="trend-top-cap">
                                         <span class="bgr"
@@ -330,7 +330,7 @@
                                     <div class="col-lg-6 col-md-6">
                                         <div class="single-what-news mb-30">
                                             <div class="what-img">
-                                                <img src="{{ asset('storage/' . $latestPost->image) }}"
+                                                <img src="{{ asset($latestPost->image) }}"
                                                     alt="{{ $latestPost->title }}">
                                             </div>
                                             <div class="what-cap">
@@ -407,7 +407,7 @@
                             <!-- Advertisement -->
                             @if ($sidebarAd)
                                 <div class="news-poster d-none d-lg-block">
-                                    <img src="{{ asset('storage/' . $sidebarAd->image) }}" alt="Advertisement">
+                                    <img src="{{ asset($sidebarAd->image) }}" alt="Advertisement">
                                 </div>
                             @endif
 
@@ -447,7 +447,7 @@
                                         @foreach ($postsByCategory[$category->id] as $post)
                                             <div class="weekly-single active">
                                                 <div class="weekly-img">
-                                                    <img src="{{ asset('storage/' . $post->image) }}"
+                                                    <img src="{{ asset($post->image) }}"
                                                         alt="{{ $post->title }}">
                                                 </div>
                                                 <div class="weekly-caption">

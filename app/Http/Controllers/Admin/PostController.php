@@ -11,7 +11,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class PostController extends Controller
 {
@@ -52,97 +51,51 @@ class PostController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'meta_title' => 'nullable|string|max:255',
-        'meta_description' => 'nullable|string|max:500',
-        'description' => 'nullable|string',
-        'category_id' => 'required|exists:category,id',
-        'writer_id' => 'required|exists:users,id',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'tags' => 'nullable|array',
-        'tags.*' => 'string',
-        'status' => 'nullable|boolean',
-    ]);
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'description' => 'nullable|string',
+            'category_id' => 'required|exists:category,id',
+            'writer_id' => 'required|exists:users,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'tags' => 'nullable|array',
+            'tags.*' => 'string',
+            'status' => 'nullable|boolean',
+        ]);
 
-    $slug = Str::slug($request->title);
-    $imagePath = null;
+        $slug = Str::slug($request->title);
 
-    if ($request->hasFile('image')) {
-        try {
-            $uploadedImage = Cloudinary::upload($request->file('image')->getRealPath());
-            $imagePath = $uploadedImage->getSecurePath();
-        } catch (\Exception $e) {
-            return back()->with('error', 'Image upload failed: '.$e->getMessage());
-        }
-    }
-
-    $post = Post::create([
-        'title' => $request->title,
-        'slug' => $slug,
-        'meta_title' => $request->meta_title,
-        'meta_description' => $request->meta_description,
-        'description' => $request->description,
-        'category_id' => $request->category_id,
-        'writer_id' => $request->writer_id,
-        'views' => 0,
-        'comments' => 0,
-        'image' => $imagePath,
-        'status' => $request->has('status') ? 1 : 0,
-    ]);
-
-    if ($request->has('tags') && is_array($request->tags)) {
-        $this->syncTags($post, $request->tags);
-    }
-
-    return redirect()->route('admin.post.manage')->with('success', 'Post added successfully!');
+        if ($request->hasFile('image')) {
+    $image = $request->file('image');
+    $imageName = time() . '_' . $image->getClientOriginalName();
+    $image->move(public_path('uploads/posts'), $imageName);
+    $imagePath = 'uploads/posts/' . $imageName;
 }
 
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'title' => 'required|string|max:255',
-    //         'meta_title' => 'nullable|string|max:255',
-    //         'meta_description' => 'nullable|string|max:500',
-    //         'description' => 'nullable|string',
-    //         'category_id' => 'required|exists:category,id',
-    //         'writer_id' => 'required|exists:users,id',
-    //         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    //         'tags' => 'nullable|array',
-    //         'tags.*' => 'string',
-    //         'status' => 'nullable|boolean',
-    //     ]);
 
-    //     $slug = Str::slug($request->title);
-    //     // $imagePath = $request->hasFile('image') ? $request->file('image')->store('posts', 'public') : null;
-    //     $imagePath = null;
-    //     if ($request->hasFile('image')) {
-    //         $uploadedImage = Cloudinary::upload($request->file('image')->getRealPath());
-    //         $imagePath = $uploadedImage->getSecurePath(); 
-    //     }
+        $post = Post::create([
+            'title' => $request->title,
+            'slug' => $slug,
+            'meta_title' => $request->meta_title,
+            'meta_description' => $request->meta_description,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'writer_id' => $request->writer_id,
+            'views' => 0,
+            'comments' => 0,
+            'image' => $imagePath,
+            'status' => $request->has('status') ? 1 : 0,
+        ]);
 
-    //     $post = Post::create([
-    //         'title' => $request->title,
-    //         'slug' => $slug,
-    //         'meta_title' => $request->meta_title,
-    //         'meta_description' => $request->meta_description,
-    //         'description' => $request->description,
-    //         'category_id' => $request->category_id,
-    //         'writer_id' => $request->writer_id,
-    //         'views' => 0,
-    //         'comments' => 0,
-    //         'image' => $imagePath,
-    //         'status' => $request->has('status') ? 1 : 0,
-    //     ]);
+        // Handle tags
+        if ($request->has('tags') && is_array($request->tags)) {
+            $this->syncTags($post, $request->tags);
+        }
 
-    //     // Handle tags
-    //     if ($request->has('tags') && is_array($request->tags)) {
-    //         $this->syncTags($post, $request->tags);
-    //     }
-
-    //     return redirect()->route('admin.post.manage')->with('success', 'Post added successfully!');
-    // }
+        return redirect()->route('admin.post.manage')->with('success', 'Post added successfully!');
+    }
 
     public function show($id)
     {
@@ -157,7 +110,7 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string|max:500',
+            'meta_description' => 'nullable|string',
             'description' => 'nullable|string',
             'category_id' => 'required|exists:category,id',
             'writer_id' => 'required|exists:users,id',
@@ -171,12 +124,13 @@ class PostController extends Controller
         $slug = Str::slug($request->title);
 
         if ($request->hasFile('image')) {
-    $uploadedImage = Cloudinary::upload($request->file('image')->getRealPath());
-    $imagePath = $uploadedImage->getSecurePath();
-} else {
-    $imagePath = $post->image;
-}
-
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+            $imagePath = $request->file('image')->store('posts', 'public');
+        } else {
+            $imagePath = $post->image;
+        }
 
         $post->update([
             'title' => $request->title,
@@ -204,9 +158,10 @@ class PostController extends Controller
     public function destroy($id)
     {
         $post = Post::findOrFail($id);
-        if ($post->image) {
-            Storage::disk('public')->delete($post->image);
-        }
+        if ($post->image && file_exists(public_path($post->image))) {
+    unlink(public_path($post->image));
+}
+
         
         // Detach all tags before deleting the post
         $post->tags()->detach();

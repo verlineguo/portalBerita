@@ -130,7 +130,7 @@
                             <div class="about-img">
                                 @if ($post->image)
                                     <div class="post-image mb-4">
-                                        <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}"
+                                        <img src="{{ asset($post->image) }}" alt="{{ $post->title }}"
                                             class="img-fluid">
                                     </div>
                                 @else
@@ -190,7 +190,7 @@
                                         @foreach ($relatedPosts as $relatedPost)
                                             <div class="col-md-4 mb-4">
                                                 <div class="card h-100">
-                                                    <img src="{{ $relatedPost->image ? asset('storage/' . $relatedPost->image) : asset('frontend/assets/img/news/whatNews1.jpg') }}"
+                                                    <img src="{{ $relatedPost->image ? asset($relatedPost->image) : asset('frontend/assets/img/news/whatNews1.jpg') }}"
                                                         alt="{{ $relatedPost->title }}" class="card-img-top">
 
                                                     <div class="card-body">
@@ -323,7 +323,7 @@
                             <!-- Advertisement -->
                             @if ($advertisement && $advertisement->status)
                                 <div class="news-poster d-none d-lg-block">
-                                    <img src="{{ asset('storage/' . $advertisement->image) }}" alt="Advertisement">
+                                    <img src="{{ asset($advertisement->image) }}" alt="Advertisement">
                                 </div>
                             @endif
                         </div>

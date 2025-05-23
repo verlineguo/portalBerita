@@ -71,7 +71,7 @@
                                             <div class="col-lg-6 col-md-6">
                                                 <div class="single-what-news mb-100">
                                                     <div class="what-img">
-                                                        <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('frontend/assets/img/news/whatNews' . $loop->iteration . '.jpg') }}"
+                                                        <img src="{{ $post->image ? asset($post->image) : asset('frontend/assets/img/news/whatNews' . $loop->iteration . '.jpg') }}"
                                                             alt="{{ $post->title }}">
                                                     </div>
                                                     <div class="what-cap">
@@ -97,7 +97,7 @@
                                                 <div class="col-lg-6 col-md-6">
                                                     <div class="single-what-news mb-100">
                                                         <div class="what-img">
-                                                            <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('frontend/assets/img/news/whatNews' . $loop->iteration . '.jpg') }}"
+                                                            <img src="{{ $post->image ? asset($post->image) : asset('frontend/assets/img/news/whatNews' . $loop->iteration . '.jpg') }}"
                                                                 alt="{{ $post->title }}">
 
                                                         </div>
@@ -171,7 +171,7 @@
                 <!-- Advertisement -->
                 @if ($advertisement && $advertisement->status)
                     <div class="news-poster d-none d-lg-block">
-                        <img src="{{ asset('storage/' . $advertisement->image) }}"
+                        <img src="{{ asset($advertisement->image) }}"
                             alt="Advertisement">
                     </div>
                
