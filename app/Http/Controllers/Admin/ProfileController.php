@@ -53,16 +53,20 @@ class ProfileController extends Controller
             }
 
             // Handle profile image upload
-            if ($request->hasFile('profile_image')) {
-                // Delete old image if exists
-                if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
-                    Storage::disk('public')->delete($user->profile_image);
-                }
+            // Handle profile image upload
+if ($request->hasFile('profile_image')) {
+    // Delete old image if exists
+    if ($user->profile_image && file_exists(public_path($user->profile_image))) {
+        unlink(public_path($user->profile_image));
+    }
 
-                // Store new image
-                $imagePath = $request->file('profile_image')->store('profile-images', 'public');
-                $userData['profile_image'] = $imagePath;
-            }
+    // Store new image in public/profile-images/
+    $image = $request->file('profile_image');
+    $imageName = time() . '_' . $image->getClientOriginalName();
+    $image->move(public_path('profile-images'), $imageName);
+    $userData['profile_image'] = 'profile-images/' . $imageName;
+}
+
 
             // Update user using update method instead of save
             User::where('id', $user->id)->update($userData);

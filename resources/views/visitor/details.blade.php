@@ -337,7 +337,7 @@
                             <h4>Popular Posts</h4>
                             @foreach ($popularPosts as $popularPost)
                                 <div class="media mb-3">
-                                    <img src="{{ $popularPost->image ? asset('storage/' . $popularPost->image) : asset('frontend/assets/img/news/whatNews1.jpg') }}"
+                                    <img src="{{ $popularPost->image ? asset($popularPost->image) : asset('frontend/assets/img/news/whatNews1.jpg') }}"
                                         alt="{{ $popularPost->title }}" class="mr-4"style="width: 80px;">
                                     <div class="media-body">
                                         <h6><a

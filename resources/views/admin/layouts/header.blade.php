@@ -147,7 +147,7 @@
                 <a class="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret" href="#"
                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     @if (auth()->user()->profile_picture)
-                        <img src="{{ asset('storage/profile-images/' . auth()->user()->profile_picture) }}"
+                        <img src="{{ asset(auth()->user()->profile_picture) }}"
                             alt="{{ auth()->user()->name }}" class="rounded-circle bg-primary" width="48">
                     @else
                         <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=0D8ABC&color=fff&size=128&rounded=true"

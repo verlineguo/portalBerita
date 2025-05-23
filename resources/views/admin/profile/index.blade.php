@@ -25,7 +25,7 @@
                             <div class="card-body">
                                 <div class="d-flex flex-column align-items-center text-center">
                                     @if (auth()->user()->profile_image)
-                                        <img src="{{ asset('storage/profile-images/' . auth()->user()->profile_image) }}"
+                                        <img src="{{ asset(auth()->user()->profile_image) }}"
                                             alt="{{ auth()->user()->name }}" class="rounded-circle p-1 bg-primary"
                                             width="110">
                                     @else
