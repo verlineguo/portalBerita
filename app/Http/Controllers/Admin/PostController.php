@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class PostController extends Controller
 {
@@ -66,7 +67,12 @@ class PostController extends Controller
         ]);
 
         $slug = Str::slug($request->title);
-        $imagePath = $request->hasFile('image') ? $request->file('image')->store('posts', 'public') : null;
+        // $imagePath = $request->hasFile('image') ? $request->file('image')->store('posts', 'public') : null;
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $uploadedImage = Cloudinary::upload($request->file('image')->getRealPath());
+            $imagePath = $uploadedImage->getSecurePath(); 
+        }
 
         $post = Post::create([
             'title' => $request->title,
@@ -117,13 +123,12 @@ class PostController extends Controller
         $slug = Str::slug($request->title);
 
         if ($request->hasFile('image')) {
-            if ($post->image) {
-                Storage::disk('public')->delete($post->image);
-            }
-            $imagePath = $request->file('image')->store('posts', 'public');
-        } else {
-            $imagePath = $post->image;
-        }
+    $uploadedImage = Cloudinary::upload($request->file('image')->getRealPath());
+    $imagePath = $uploadedImage->getSecurePath();
+} else {
+    $imagePath = $post->image;
+}
+
 
         $post->update([
             'title' => $request->title,
