@@ -275,7 +275,7 @@
                                                                     <div class="reply-body bg-white p-2 rounded w-100">
                                                                         <div class="d-flex justify-content-between align-items-center">
                                                                             <h6 class="mb-0 font-weight-bold">{{ $reply->user->name }}</h6>
-                                                                            <p class="reply-date text-muted mb-0 small"><i class="far fa-clock mr-1"></i>{{ $reply->created_at->format('M d, Y') }}</p>
+                                                                            <p class="reply-date text-muted mb-0 " style="text-align: justify;"><i class="far fa-clock mr-1"></i>{{ $reply->created_at->format('M d, Y') }}</p>
                                                                         </div>
                                                                         <div class="reply-text">
                                                                             <p class="mb-1 small">{{ $reply->comment }}</p>

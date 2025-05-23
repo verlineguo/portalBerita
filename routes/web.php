@@ -17,6 +17,7 @@ use App\Http\Controllers\Writer\CommentController as WriterCommentController;
 use App\Http\Controllers\Visitor\NewsletterController as VisitorNewsletterController;
 use App\Http\Controllers\Visitor\ContactController as VisitorContactController;
 use App\Http\Controllers\Visitor\CategoryController as VisitorCategoryController;
+use App\Http\Controllers\Visitor\AboutController as VisitorAboutController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Visitor\VisitorMainController;
 use App\Http\Controllers\Writer\WriterMainController;
@@ -176,7 +177,6 @@ Route::prefix('visitor')->group(function () {
         Route::get('/latestnews', 'latestNews')->name('visitor.latest_news');
         Route::get('/settings', 'setting')->name('visitor.settings');
         Route::get('/comment/history', 'comment_history')->middleware('auth')->name('visitor.comment.history');
-        Route::get('/about', 'about')->name('visitor.about');
         Route::get('/tag/{name}', 'tagPosts')->name('tag.posts');
     });
     Route::controller(VisitorNewsletterController::class)->group(function () {
@@ -189,6 +189,10 @@ Route::prefix('visitor')->group(function () {
     Route::controller(VisitorContactController::class)->group(function () {
         Route::get('/contact', 'index')->name('visitor.contact');
         Route::post('/contact', 'store')->name('visitor.contact.store');
+    });
+
+    Route::controller(VisitorAboutController::class)->group(function () {
+        Route::get('/about', 'index')->name('visitor.about');
     });
 
     

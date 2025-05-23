@@ -149,65 +149,190 @@
             text-decoration: none;
         }
 
-        /* Category news styling */
+        /* Category news styling - FIXED VERSION */
         .weekly-news-active {
-            display: flex;
-            overflow-x: auto;
-            padding-bottom: 20px;
+            /* Remove the conflicting flexbox styles */
+            /* display: flex; */
+            /* overflow-x: auto; */
+            /* padding-bottom: 20px; */
+        }
+
+        /* Slick Slider Overrides */
+        .weekly-news-active.slick-initialized {
+            display: block !important;
+        }
+
+        .weekly-news-active .slick-track {
+            display: flex !important;
+            width: auto !important;
+            min-width: 100% !important;
+        }
+
+        .weekly-news-active .slick-slide {
+            margin-right: 20px;
+            width: auto !important;
+            min-width: 270px;
         }
 
         .weekly-single {
             min-width: 270px;
-            margin-right: 20px;
+            /* margin-right: 20px; - handled by slick-slide now */
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
             border-radius: 5px;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
-        .weekly-img {
-            height: 180px;
-            overflow: hidden;
+        /* Alternative: If you want to disable Slick and use pure CSS */
+        .weekly-news-active-fallback {
+            display: flex;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            gap: 20px;
+            scroll-behavior: smooth;
         }
 
-        .weekly-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
+        .weekly-news-active-fallback::-webkit-scrollbar {
+            height: 6px;
         }
 
-        .weekly-single:hover .weekly-img img {
-            transform: scale(1.1);
+        .weekly-news-active-fallback::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
         }
 
-        .weekly-caption {
-            padding: 15px;
-            background: #fff;
+        .weekly-news-active-fallback::-webkit-scrollbar-thumb {
+            background: #1ebbf0;
+            border-radius: 3px;
         }
 
-        .weekly-caption h4 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            line-height: 1.4;
+        .weekly-news-active-fallback::-webkit-scrollbar-thumb:hover {
+            background: #0ea5d9;
         }
 
-        .weekly-caption h4 a {
+        /* Slick dots styling */
+        .weekly-news-active .slick-dots {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .weekly-news-active .slick-dots li {
+            display: inline-block;
+            margin: 0 5px;
+        }
+
+        .weekly-news-active .slick-dots li button {
+            background: #ddd;
+            border: none;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            text-indent: -9999px;
+            cursor: pointer;
+        }
+
+        .weekly-news-active .slick-dots li.slick-active button {
+            background: #1ebbf0;
+        }
+
+        /* Responsive fixes */
+        @media (max-width: 991px) {
+            .weekly-single {
+                min-width: 250px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .weekly-single {
+                min-width: 200px;
+            }
+
+            .weekly-news-active .slick-slide {
+                margin-right: 15px;
+            }
+        }
+
+
+        /* Sidebar improvements */
+        .sidebar {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #1ebbf0;
             color: #000;
-            transition: color 0.3s ease;
         }
 
-        .weekly-caption h4 a:hover {
-            color: #1ebbf0;
+        /* Social media links */
+        .social-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
             text-decoration: none;
+            color: #333;
         }
 
-        .weekly-caption p {
-            font-size: 12px;
-            color: #777;
+        .social-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            color: #1ebbf0;
         }
 
-        
+        .social-link img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .newsletter-form {
+            display: flex;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .newsletter-form input {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .newsletter-form button {
+            background: linear-gradient(45deg, #1ebbf0, #45b7d1);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-form button:hover {
+            background: linear-gradient(45deg, #45b7d1, #1ebbf0);
+        }
+
 
         /* Responsive adjustments */
         @media (max-width: 767px) {
@@ -287,8 +412,7 @@
                             <!-- Trending Top -->
                             <div class="trending-top mb-30">
                                 <div class="trend-top-img">
-                                    <img src="{{ asset($featuredPost->image) }}"
-                                        alt="{{ $featuredPost->title }}">
+                                    <img src="{{ asset($featuredPost->image) }}" alt="{{ $featuredPost->title }}">
                                     <div class="trend-top-cap">
                                         <span class="bgr"
                                             style="background-color:#1ebbf0">{{ $featuredPost->category->name }}</span>
@@ -330,8 +454,7 @@
                                     <div class="col-lg-6 col-md-6">
                                         <div class="single-what-news mb-30">
                                             <div class="what-img">
-                                                <img src="{{ asset($latestPost->image) }}"
-                                                    alt="{{ $latestPost->title }}">
+                                                <img src="{{ asset($latestPost->image) }}" alt="{{ $latestPost->title }}">
                                             </div>
                                             <div class="what-cap">
                                                 <span class="color1">{{ $latestPost->category->name }}</span>
@@ -353,63 +476,55 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4">
-                            <!-- Section Tittle -->
-                            <div class="section-tittle mb-40">
-                                <h3>Follow Us</h3>
-                            </div>
-                            <!-- Flow Socail -->
-                            <div class="single-follow mb-45">
-                                <div class="single-box">
-                                    <div class="follow-us d-flex align-items-center">
-                                        <div class="follow-social">
-                                            <a href="#"><img src="{{ asset('assets/img/news/icon-fb.png') }}"
-                                                    alt=""></a>
-                                        </div>
-                                        <div class="follow-count">
-                                            <span>8,045</span>
-                                            <p>Fans</p>
-                                        </div>
-                                    </div>
-                                    <div class="follow-us d-flex align-items-center">
-                                        <div class="follow-social">
-                                            <a href="#"><img src="{{ asset('assets/img/news/icon-tw.png') }}"
-                                                    alt=""></a>
-                                        </div>
-                                        <div class="follow-count">
-                                            <span>8,045</span>
-                                            <p>Followers</p>
-                                        </div>
-                                    </div>
-                                    <div class="follow-us d-flex align-items-center">
-                                        <div class="follow-social">
-                                            <a href="#"><img src="{{ asset('assets/img/news/icon-ins.png') }}"
-                                                    alt=""></a>
-                                        </div>
-                                        <div class="follow-count">
-                                            <span>8,045</span>
-                                            <p>Followers</p>
-                                        </div>
-                                    </div>
-                                    <div class="follow-us d-flex align-items-center">
-                                        <div class="follow-social">
-                                            <a href="#"><img src="{{ asset('assets/img/news/icon-yo.png') }}"
-                                                    alt=""></a>
-                                        </div>
-                                        <div class="follow-count">
-                                            <span>8,045</span>
-                                            <p>Subscribers</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Advertisement -->
-                            @if ($sidebarAd)
-                                <div class="news-poster d-none d-lg-block">
-                                    <img src="{{ asset($sidebarAd->image) }}" alt="Advertisement">
+                        <div class="col-lg-4">
+                            <div class="sidebar">
+                                <h4 class="sidebar-title">Subscribe & Follow</h4>
+                                <div class="social-links">
+                                    <a href="#" class="social-link">
+                                        <img src="{{ asset('frontend') }}/assets/img/news/icon-fb.png" alt="Facebook">
+                                        <span>Facebook</span>
+                                    </a>
+                                    <a href="#" class="social-link">
+                                        <img src="{{ asset('frontend') }}/assets/img/news/icon-tw.png" alt="Twitter">
+                                        <span>Twitter</span>
+                                    </a>
+                                    <a href="#" class="social-link">
+                                        <img src="{{ asset('frontend') }}/assets/img/news/icon-ins.png" alt="Instagram">
+                                        <span>Instagram</span>
+                                    </a>
+                                    <a href="#" class="social-link">
+                                        <img src="{{ asset('frontend') }}/assets/img/news/icon-yo.png" alt="YouTube">
+                                        <span>YouTube</span>
+                                    </a>
                                 </div>
-                            @endif
+
+                                <h4 class="sidebar-title mt-4">Newsletter</h4>
+                                <p>Stay updated with our latest news and updates directly in your inbox.</p>
+                                <form class="newsletter-form" action="{{ route('visitor.newsletter.store') }}"
+                                    method="POST">
+                                    @csrf
+                                    <input type="email" name="email" placeholder="Your email address" required>
+                                    <button type="submit">Subscribe</button>
+                                </form>
+
+                                <!-- Advertisement -->
+                                <div class="mt-4">
+                                    @if ($advertisement && $advertisement->status)
+                                        <div class="text-center">
+                                            <a href="{{ $advertisement->image }}" target="_blank">
+                                                <img src="{{ asset($advertisement->image) }}" alt="Advertisement"
+                                                    class="img-fluid rounded">
+                                            </a>
+                                        </div>
+                                    @else
+                                        <div class="text-center">
+                                            <img src="{{ asset('frontend') }}/assets/img/news/news_card.jpg"
+                                                alt="Advertisement" class="img-fluid rounded">
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
 
                             <!-- Popular Tags -->
                             <div class="section-tittle mb-40 mt-40">
@@ -447,7 +562,7 @@
                                         @foreach ($postsByCategory[$category->id] as $post)
                                             <div class="weekly-single active">
                                                 <div class="weekly-img">
-                                                    <img src="{{ asset($post->image) }}"
+                                                    <img src="{{ asset($post->image) }}" width="300px" height="300px"
                                                         alt="{{ $post->title }}">
                                                 </div>
                                                 <div class="weekly-caption">
@@ -468,6 +583,60 @@
         @endforeach
         <!-- End Category News Area -->
 
-  
+
     </main>
+@endsection
+
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            // Tunggu sampai semua gambar dimuat
+            $(window).on('load', function() {
+                // Inisialisasi ulang semua slider category
+                $('.weekly-news-active').each(function() {
+                    var $slider = $(this);
+
+                    // Destroy jika sudah ada
+                    if ($slider.hasClass('slick-initialized')) {
+                        $slider.slick('unslick');
+                    }
+
+                    // Inisialisasi dengan delay
+                    setTimeout(function() {
+                        $slider.slick({
+                            dots: true,
+                            infinite: true,
+                            speed: 300,
+                            slidesToShow: 4,
+                            slidesToScroll: 1,
+                            autoplay: true,
+                            autoplaySpeed: 3000,
+                            responsive: [{
+                                    breakpoint: 1024,
+                                    settings: {
+                                        slidesToShow: 3,
+                                        slidesToScroll: 1
+                                    }
+                                },
+                                {
+                                    breakpoint: 768,
+                                    settings: {
+                                        slidesToShow: 2,
+                                        slidesToScroll: 1
+                                    }
+                                },
+                                {
+                                    breakpoint: 480,
+                                    settings: {
+                                        slidesToShow: 1,
+                                        slidesToScroll: 1
+                                    }
+                                }
+                            ]
+                        });
+                    }, 100);
+                });
+            });
+        });
+    </script>
 @endsection

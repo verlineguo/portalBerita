@@ -1,5 +1,58 @@
 @extends('visitor.layouts.app')
+@section('styles')
+<style>
+     /* Sidebar improvements */
+        .sidebar {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
 
+        .sidebar-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #1ebbf0;
+            color: #000;
+        }
+
+        /* Social media links */
+        .social-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            color: #1ebbf0;
+        }
+
+        .social-link img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+</style>
+@endsection
 @section('content')
     <section class="contact-section">
         <div class="container">
