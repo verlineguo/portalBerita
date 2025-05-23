@@ -113,16 +113,12 @@
                             @foreach ($posts as $post)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    {{-- <td>
+                                    <td>
                                         <img src="{{ asset('storage/' . $post->image) }}" width="200"
                                             alt="Advertisement Image">
-                                    </td> --}}
-
-                                    <td>
-                                        <img src="{{ $post->image) }}" width="200"
-                                            alt="Post Image">
                                     </td>
 
+                                    
                                     <td>{{ $post->title }}</td>
                                     <td>{{ $post->category->name ?? 'Uncategorized' }}</td>
                                     <td>{{ $post->writer->name ?? 'Unknown' }}</td>

@@ -52,49 +52,97 @@ class PostController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string|max:500',
-            'description' => 'nullable|string',
-            'category_id' => 'required|exists:category,id',
-            'writer_id' => 'required|exists:users,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'tags' => 'nullable|array',
-            'tags.*' => 'string',
-            'status' => 'nullable|boolean',
-        ]);
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'meta_title' => 'nullable|string|max:255',
+        'meta_description' => 'nullable|string|max:500',
+        'description' => 'nullable|string',
+        'category_id' => 'required|exists:category,id',
+        'writer_id' => 'required|exists:users,id',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'tags' => 'nullable|array',
+        'tags.*' => 'string',
+        'status' => 'nullable|boolean',
+    ]);
 
-        $slug = Str::slug($request->title);
-        // $imagePath = $request->hasFile('image') ? $request->file('image')->store('posts', 'public') : null;
-        $imagePath = null;
-        if ($request->hasFile('image')) {
+    $slug = Str::slug($request->title);
+    $imagePath = null;
+
+    if ($request->hasFile('image')) {
+        try {
             $uploadedImage = Cloudinary::upload($request->file('image')->getRealPath());
-            $imagePath = $uploadedImage->getSecurePath(); 
+            $imagePath = $uploadedImage->getSecurePath();
+        } catch (\Exception $e) {
+            return back()->with('error', 'Image upload failed: '.$e->getMessage());
         }
-
-        $post = Post::create([
-            'title' => $request->title,
-            'slug' => $slug,
-            'meta_title' => $request->meta_title,
-            'meta_description' => $request->meta_description,
-            'description' => $request->description,
-            'category_id' => $request->category_id,
-            'writer_id' => $request->writer_id,
-            'views' => 0,
-            'comments' => 0,
-            'image' => $imagePath,
-            'status' => $request->has('status') ? 1 : 0,
-        ]);
-
-        // Handle tags
-        if ($request->has('tags') && is_array($request->tags)) {
-            $this->syncTags($post, $request->tags);
-        }
-
-        return redirect()->route('admin.post.manage')->with('success', 'Post added successfully!');
     }
+
+    $post = Post::create([
+        'title' => $request->title,
+        'slug' => $slug,
+        'meta_title' => $request->meta_title,
+        'meta_description' => $request->meta_description,
+        'description' => $request->description,
+        'category_id' => $request->category_id,
+        'writer_id' => $request->writer_id,
+        'views' => 0,
+        'comments' => 0,
+        'image' => $imagePath,
+        'status' => $request->has('status') ? 1 : 0,
+    ]);
+
+    if ($request->has('tags') && is_array($request->tags)) {
+        $this->syncTags($post, $request->tags);
+    }
+
+    return redirect()->route('admin.post.manage')->with('success', 'Post added successfully!');
+}
+
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'title' => 'required|string|max:255',
+    //         'meta_title' => 'nullable|string|max:255',
+    //         'meta_description' => 'nullable|string|max:500',
+    //         'description' => 'nullable|string',
+    //         'category_id' => 'required|exists:category,id',
+    //         'writer_id' => 'required|exists:users,id',
+    //         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    //         'tags' => 'nullable|array',
+    //         'tags.*' => 'string',
+    //         'status' => 'nullable|boolean',
+    //     ]);
+
+    //     $slug = Str::slug($request->title);
+    //     // $imagePath = $request->hasFile('image') ? $request->file('image')->store('posts', 'public') : null;
+    //     $imagePath = null;
+    //     if ($request->hasFile('image')) {
+    //         $uploadedImage = Cloudinary::upload($request->file('image')->getRealPath());
+    //         $imagePath = $uploadedImage->getSecurePath(); 
+    //     }
+
+    //     $post = Post::create([
+    //         'title' => $request->title,
+    //         'slug' => $slug,
+    //         'meta_title' => $request->meta_title,
+    //         'meta_description' => $request->meta_description,
+    //         'description' => $request->description,
+    //         'category_id' => $request->category_id,
+    //         'writer_id' => $request->writer_id,
+    //         'views' => 0,
+    //         'comments' => 0,
+    //         'image' => $imagePath,
+    //         'status' => $request->has('status') ? 1 : 0,
+    //     ]);
+
+    //     // Handle tags
+    //     if ($request->has('tags') && is_array($request->tags)) {
+    //         $this->syncTags($post, $request->tags);
+    //     }
+
+    //     return redirect()->route('admin.post.manage')->with('success', 'Post added successfully!');
+    // }
 
     public function show($id)
     {
